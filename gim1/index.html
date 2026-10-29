@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberOps Academy: Core Informatics Edition</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Cyber Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#070a12',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            green: '#10b981',
+                            greenGlow: '#059669',
+                            cyan: '#06b6d4',
+                            purple: '#a855f7',
+                            yellow: '#f59e0b',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        title: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070a12;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.15) 0%, transparent 70%),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.85), rgba(7, 10, 18, 0.98));
+            background-attachment: fixed;
+        }
+
+        /* Scanline Overlay Effect */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.3) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 50;
+            opacity: 0.5;
+        }
+
+        /* Neon Glow Effects */
+        .glow-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.7); }
+        .glow-text-green { text-shadow: 0 0 10px rgba(16, 185, 129, 0.7); }
+        .glow-text-purple { text-shadow: 0 0 10px rgba(168, 85, 247, 0.7); }
+        .glow-border-cyan { box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+        .glow-border-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; background-image: none !important; }
+            .print-card { border: 2px solid #000 !important; color: #000 !important; box-shadow: none !important; background: #fff !important; }
+            .print-card * { color: #000 !important; text-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6 relative">
+    
+    <!-- Retro Scanline Effect -->
+    <div class="scanline no-print"></div>
+
+    <!-- Header Navigation Bar -->
+    <header class="w-full max-w-5xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-4 backdrop-blur-md flex flex-wrap justify-between items-center gap-2 z-10 shadow-lg glow-border-cyan">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyber-cyan via-cyber-purple to-cyber-green flex items-center justify-center text-slate-950 text-xl font-bold shadow-md">
+                <i class="fa-solid fa-laptop-code"></i>
+            </div>
+            <div>
+                <h1 class="font-title text-xs sm:text-sm md:text-base font-black tracking-wider text-cyber-cyan glow-text-cyan">
+                    CYBEROPS ACADEMY: CORE INFORMATICS
+                </h1>
+                <p class="text-[10px] sm:text-xs text-slate-400">Petualangan & Evaluasi Elemen Mata Pelajaran Informatika SMK Negeri 2 Klaten</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm">
+            <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-stopwatch text-cyber-yellow"></i>
+                <span id="timerDisplay" class="font-bold text-cyber-yellow font-title">30:00</span>
+            </div>
+
+            <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-cyber-green"></i>
+                <span class="text-slate-400">Skor:</span>
+                <span id="topScore" class="font-bold text-cyber-green font-title">0</span>
+            </div>
+
+            <button onclick="toggleAudio()" id="soundBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700 transition cursor-pointer" title="Toggle Sound">
+                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="w-full max-w-5xl mx-auto my-auto z-10 flex-grow flex items-center justify-center">
+
+        <!-- ==================== SCREEN 1: WELCOME SCREEN ==================== -->
+        <section id="welcomeScreen" class="w-full bg-slate-900/85 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-md shadow-2xl space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-block px-3 py-1 bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-full text-cyber-cyan text-xs font-semibold tracking-wider uppercase mb-1">
+                    Simulasi & Game Petualangan Informatika SMK Negeri 2 Klaten
+                </div>
+                <h2 class="font-title text-xl sm:text-3xl font-extrabold text-white tracking-wide">
+                    Misi Penyelamatan Sistem Informasi Pusat
+                </h2>
+                <p class="text-slate-400 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+                    Selamat datang, Agent Informatika! Kota Siber <strong class="text-cyber-cyan">Stemsend Cyber City</strong> diserang oleh krisis infrastruktur sistem. Selesaikan 4 Misi Utama (20 Soal Skenario Studi Kasus) yang mencakup <span class="text-cyber-cyan">Berpikir Komputasional</span>, <span class="text-cyber-purple">TIK</span>, <span class="text-cyber-yellow">Sistem Komputer</span>, dan <span class="text-cyber-green">Jaringan Komputer & Internet</span>!
+                </p>
+            </div>
+
+            <!-- Identitas Siswa Form -->
+            <form onsubmit="startGame(event)" class="max-w-md mx-auto space-y-4 bg-slate-950/80 p-5 rounded-xl border border-slate-800">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 font-semibold">Nama Lengkap Siswa:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="playerName" required placeholder="Contoh: Ahmad Suruli" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pl-10 pr-3 text-sm text-white focus:outline-none focus:border-cyber-cyan transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 font-semibold">Kelas / Rombel:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-school absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="playerClass" required placeholder="Contoh: X PPLG A" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pl-10 pr-3 text-sm text-white focus:outline-none focus:border-cyber-cyan transition">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" 
+                        class="w-full bg-gradient-to-r from-cyber-cyan via-blue-600 to-cyber-purple hover:from-cyan-400 hover:to-purple-500 text-slate-950 font-title font-bold py-3 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-play"></i> MULAI PERMAINAN (30 MENIT)
+                    </button>
+                </div>
+            </form>
+
+            <!-- Ringkasan Materi 4 Elemen -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 text-[10px] sm:text-xs">
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-brain text-cyber-cyan mb-1.5 text-base block"></i>
+                    <span class="text-slate-200 font-bold block">MISI 1: BK</span>
+                    <span class="text-slate-500 text-[9px]">Berpikir Komputasional</span>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-file-lines text-cyber-purple mb-1.5 text-base block"></i>
+                    <span class="text-slate-200 font-bold block">MISI 2: TIK</span>
+                    <span class="text-slate-500 text-[9px]">Teknologi Inf. & Kom.</span>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-microchip text-cyber-yellow mb-1.5 text-base block"></i>
+                    <span class="text-slate-200 font-bold block">MISI 3: SK</span>
+                    <span class="text-slate-500 text-[9px]">Sistem Komputer</span>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-network-wired text-cyber-green mb-1.5 text-base block"></i>
+                    <span class="text-slate-200 font-bold block">MISI 4: JKI</span>
+                    <span class="text-slate-500 text-[9px]">Jaringan Komp. & Internet</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 2: GAMEPLAY SCREEN ==================== -->
+        <section id="gameScreen" class="w-full bg-slate-900/85 border border-slate-800 rounded-2xl p-4 sm:p-6 backdrop-blur-md shadow-2xl space-y-5 hidden">
+            
+            <!-- Progress Bar Info -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                    <span id="missionBadge" class="bg-cyber-cyan/10 border border-cyber-cyan/40 text-cyber-cyan px-2.5 py-1 rounded-md font-semibold">
+                        MISI 1 / 4 (SOAL 1/20)
+                    </span>
+                    <span id="sysUser" class="text-slate-400 font-mono">User: Agent</span>
+                </div>
+                <!-- Bar Line -->
+                <div class="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                    <div id="progressBar" class="bg-gradient-to-r from-cyber-cyan via-cyber-purple to-cyber-green h-full w-[5%] transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Card Misi & Skenario Soal -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
+                <div class="flex items-center gap-2 text-cyber-cyan text-xs font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span id="missionTitle">Misi 1: Berpikir Komputasional</span>
+                </div>
+
+                <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 text-xs sm:text-sm text-slate-300 italic border-l-4 border-l-cyber-cyan">
+                    <i class="fa-solid fa-quote-left text-slate-600 mr-1"></i>
+                    <span id="missionStory">Story scenario goes here...</span>
+                </div>
+
+                <div class="pt-1">
+                    <span class="text-[10px] text-cyber-yellow bg-cyber-yellow/10 px-2 py-0.5 rounded border border-cyber-yellow/20 inline-block mb-1">
+                        🎯 Indikator Elemen Informatika:
+                    </span>
+                    <p id="learningGoal" class="text-xs text-slate-400 font-sans">Tujuan pembelajaran...</p>
+                </div>
+            </div>
+
+            <!-- Teks Pertanyaan -->
+            <div class="space-y-3">
+                <h3 id="questionText" class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                    Pertanyaan soal akan muncul di sini...
+                </h3>
+
+                <!-- Pilihan Jawaban (A, B, C, D) -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-2.5 pt-1">
+                    <!-- Buttons inserted dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Umpan Balik / Edukasi Box -->
+            <div id="feedbackBox" class="rounded-xl p-4 border bg-slate-950 border-slate-800 space-y-2 hidden">
+                <div id="feedbackHeader" class="font-title text-xs sm:text-sm font-bold flex items-center gap-2">
+                    <!-- Dynamic Header -->
+                </div>
+                <p id="feedbackText" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                    <!-- Dynamic Explanation -->
+                </p>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="nextQuestion()" 
+                        class="bg-cyber-cyan hover:bg-cyan-400 text-slate-950 font-title font-bold px-5 py-2 rounded-lg text-xs sm:text-sm transition cursor-pointer flex items-center gap-2">
+                        LANJUTKAN TANTANGAN <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 3: CERTIFICATE / RESULT ==================== -->
+        <section id="resultScreen" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-8 backdrop-blur-md shadow-2xl space-y-6 hidden">
+            
+            <!-- Certificate Layout Card -->
+            <div id="certificateArea" class="print-card bg-slate-950 border-2 border-cyber-cyan/50 rounded-2xl p-5 sm:p-8 relative overflow-hidden space-y-6 glow-border-cyan">
+                <!-- Background Watermark -->
+                <div class="absolute -right-10 -bottom-10 text-slate-900 opacity-20 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-[10px] sm:text-xs text-cyber-cyan font-title font-bold tracking-widest block">PIAGAM EVALUASI HASIL BELAJAR</span>
+                        <h2 class="text-lg sm:text-2xl font-title font-black text-white">CYBEROPS INFORMATICA MASTER</h2>
+                        <p class="text-[10px] sm:text-xs text-slate-400">Mata Pelajaran Informatika - Kurikulum Merdeka / K13</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block">Tanggal Selesai:</span>
+                        <span id="resDate" class="text-xs sm:text-sm text-white font-mono font-bold">--/--/----</span>
+                    </div>
+                </div>
+
+                <!-- Info Murid & Skor -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Nama Siswa:</span>
+                        <span id="resPlayerName" class="text-sm sm:text-base font-bold text-white font-title">Agent Name</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Kelas:</span>
+                        <span id="resPlayerClass" class="text-sm sm:text-base font-bold text-cyber-cyan font-title">Class Name</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Waktu Pengerjaan:</span>
+                        <span id="resTimeTaken" class="text-sm sm:text-base font-bold text-cyber-yellow font-title">0m 0s</span>
+                    </div>
+                </div>
+
+                <!-- Final Badge & Score -->
+                <div class="text-center py-2 space-y-2">
+                    <span class="text-xs text-slate-400 uppercase tracking-widest">Predikat Tingkat Penguasaan Kompeetensi</span>
+                    <div id="resTitle" class="font-title text-xl sm:text-3xl font-black text-cyber-green glow-text-green">
+                        🏆 INFORMATICS SPECIALIST
+                    </div>
+                    <div class="flex justify-center items-baseline gap-2 pt-1">
+                        <span class="text-slate-400 text-xs">Total Skor Akumulasi:</span>
+                        <span id="resFinalScore" class="font-title text-2xl sm:text-4xl font-extrabold text-white">100</span>
+                        <span class="text-slate-500 text-sm">/ 100</span>
+                    </div>
+                </div>
+
+                <!-- Feedback & Catatan Evaluasi -->
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed" id="resReward">
+                    Catatan evaluasi akan diproses...
+                </div>
+
+                <!-- Rincian Hasil Per Misi (4 Elemen) -->
+                <div class="space-y-2">
+                    <span class="text-xs text-slate-400 font-bold block">Perolehan Poin Per Elemen Informatika (Maks 25 Poin / Elemen):</span>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text.11px" id="resMissionBreakdown">
+                        <!-- Dynamic inserted per-mission breakdown -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center sm:justify-end gap-3 no-print">
+                <button onclick="window.print()" 
+                    class="bg-slate-800 hover:bg-slate-700 text-white font-title font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-700 transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                </button>
+                <button onclick="restartGame()" 
+                    class="bg-cyber-cyan hover:bg-cyan-400 text-slate-950 font-title font-bold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Ulangi Game
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-5xl mx-auto text-center text-[10px] sm:text-xs text-slate-600 py-3 z-10 no-print">
+        CyberOps Academy: Core Informatics Edition &copy; Media Pembelajaran Interaktif SMK Negeri 2 Klaten
+    </footer>
+
+    <!-- JavaScript Game Engine -->
+    <script>
+        // ==================== GAME DATA: 4 MISSIONS x 5 QUESTIONS = 20 TOTAL QUESTIONS ====================
+        const gameMissions = [
+            // -------------------- MISI 1: BERPIKIR KOMPUTASIONAL (5 SOAL) --------------------
+            {
+                id: 1,
+                domain: "BK",
+                badge: "MISI 1 / 4: BERPIKIR KOMPUTASIONAL (SOAL 1/20)",
+                title: "Misi 1: Berpikir Komputasional (BK)",
+                story: "Sistem pusat server Stemsend Cyber City mengalami crash parah karena kegagalan pemrosesan data massal. Langkah pertama kamu adalah memecah masalah besar ini menjadi bagian-bagian kecil yang mudah dikelola.",
+                goal: "Memahami dan menerapkan pilar Dekomposisi dalam pemecahan masalah kompleks.",
+                question: "1. Ketika menghadapi masalah kompleks seperti kegagalan seluruh jaringan kota, langkah Dekomposisi (Decomposition) yang paling tepat adalah...",
+                options: [
+                    { text: "A. Memecah analisis masalah menjadi pemeriksaan komponen terpisah: Router, Server, Kabel Fiber, dan Konfigurasi IP.", correct: true },
+                    { text: "B. Membeli seluruh hardware server baru tanpa mengecek letak kerusakan.", correct: false },
+                    { text: "C. Mengabaikan error dan langsung merestart sistem secara paksa berulang kali.", correct: false },
+                    { text: "D. Menulis kode program dari awal tanpa mengidentifikasi penyebab error.", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nDekomposisi adalah memecah masalah besar dan rumit menjadi bagian-bagian kecil yang lebih sederhana agar mudah dianalisis dan diselesaikan satu per satu.",
+                    wrong: "Kurang Tepat! (0 Poin)\nDekomposisi menekankan pemecahan masalah besar menjadi sub-bagian terstruktur. Membeli hardware baru atau merestart tanpa analisis bukan pilar Dekomposisi."
+                }
+            },
+            {
+                id: 1,
+                domain: "BK",
+                badge: "MISI 1 / 4: BERPIKIR KOMPUTASIONAL (SOAL 2/20)",
+                title: "Misi 1: Berpikir Komputasional (BK)",
+                story: "Kamu menganalisis berkas log aktivitas serangan cyber dan menemukan bahwa pola kegagalan sistem selalu terjadi setiap kali ada lonjakan trafik pada pukul 02:00 malam dengan urutan byte data yang identik.",
+                goal: "Memahami teknik Pengenalan Pola (Pattern Recognition).",
+                question: "2. Penggunaan pilar Pengenalan Pola (Pattern Recognition) dalam kasus analisis log di atas bertujuan untuk...",
+                options: [
+                    { text: "A. Menemukan kesamaan atau keteraturan karakteristik dari data error untuk memprediksi dan mencegah serangan serupa.", correct: true },
+                    { text: "B. Menghapus seluruh log server agar penyimpanan disk kembali kosong.", correct: false },
+                    { text: "C. Mengubah format berkas teks menjadi gambar artistik.", correct: false },
+                    { text: "D. Mempercepat kecepatan koneksi internet secara langsung.", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Tajam! (+5 Poin)\nPengenalan Pola membantu kita mengenali kemiripan, keteraturan, atau tren berulang pada data sehingga solusi efisien dapat dirancang.",
+                    wrong: "Belum Benar! (0 Poin)\nPengenalan Pola berfokus mencari kesamaan pola/keteraturan dari insiden masa lalu untuk mempermudah penyelesaian masalah."
+                }
+            },
+            {
+                id: 1,
+                domain: "BK",
+                badge: "MISI 1 / 4: BERPIKIR KOMPUTASIONAL (SOAL 3/20)",
+                title: "Misi 1: Berpikir Komputasional (BK)",
+                story: "Saat merancang sistem navigasi lalu lintas lalu-lintas data, kamu hanya fokus pada variabel alamat tujuan dan bobot jalur, serta mengabaikan warna casing router fisik.",
+                goal: "Memahami konsep Abstraksi (Abstraction) dalam pemodelan data.",
+                question: "3. Proses mengabaikan rincian/detail yang tidak relevan dan hanya berfokus pada informasi penting yang dibutuhkan dinamakan...",
+                options: [
+                    { text: "A. Abstraksi (Abstraction)", correct: true },
+                    { text: "B. Kompilasi (Compilation)", correct: false },
+                    { text: "C. Enkapsulasi (Encapsulation)", correct: false },
+                    { text: "D. Duplikasi (Duplication)", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+5 Poin)\nAbstraksi membuang informasi yang tidak penting dan memfokuskan perhatian pada karakteristik umum serta informasi esensial bagi pemodelan.",
+                    wrong: "Salah! (0 Poin)\nProses memfilter/mengabaikan detail tidak penting agar fokus pada informasi utama dinamakan Abstraksi."
+                }
+            },
+            {
+                id: 1,
+                domain: "BK",
+                badge: "MISI 1 / 4: BERPIKIR KOMPUTASIONAL (SOAL 4/20)",
+                title: "Misi 1: Berpikir Komputasional (BK)",
+                story: "Kamu diminta membuat urutan langkah logis yang pasti dan terstruktur untuk mengurutkan (sorting) 100.000 data ID pengguna secara efisien.",
+                goal: "Memahami konsep Algoritma dan Kompleksitas Efisiensi.",
+                question: "4. Di antara pilihan berikut, manakah skenario penulisan algoritma pencarian data terurut yang memiliki efisiensi waktu paling optimal untuk data dalam jumlah sangat besar?",
+                options: [
+                    { text: "A. Binary Search (Pencarian Biner) dengan kompleksitas O(log n).", correct: true },
+                    { text: "B. Linear Search (Pencarian Berurutan) satu per satu dari awal sampai akhir.", correct: false },
+                    { text: "C. Random Search (Menebak indeks acak secara terus menerus).", correct: false },
+                    { text: "D. Mengulang-ulang pencarian dari elemen pertama tanpa kondisi henti.", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+5 Poin)\nBinary Search membagi dua ruang pencarian pada setiap langkah, menghasilkan kompleksitas waktu O(log n) yang sangat jauh lebih cepat dibanding Linear Search O(n) untuk data besar.",
+                    wrong: "Salah! (0 Poin)\nLinear search O(n) lambat untuk data massal. Algoritma pencarian terurut yang paling efisien adalah Binary Search O(log n)."
+                }
+            },
+            {
+                id: 1,
+                domain: "BK",
+                badge: "MISI 1 / 4: BERPIKIR KOMPUTASIONAL (SOAL 5/20)",
+                title: "Misi 1: Berpikir Komputasional (BK)",
+                story: "Tim kamu menggambarkan algoritma alur kerja logika login pengguna menggunakan simbol bagir standar: Lonjong (Start/End), Jajar Genjang (Input/Output), dan Belah Ketupat (Keputusan/Decision).",
+                goal: "Mengenal representasi algoritma menggunakan Flowchart.",
+                question: "5. Simbol berbentuk Belah Ketupat (Decision) pada bagal alir (Flowchart) digunakan untuk menandai...",
+                options: [
+                    { text: "A. Percabangan kondisi / pengambilan keputusan logika (Ya/Tidak atau True/False).", correct: true },
+                    { text: "B. Awal dan akhir dari sebuah program.", correct: false },
+                    { text: "C. Proses perhitungan matematika dasar.", correct: false },
+                    { text: "D. Input data dari papan ketik (keyboard).", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nSimbol belah ketupat (Decision) dievaluasi berdasarkan kondisi boolean (True/False) untuk menentukan jalur eksekusi algoritma selanjutnya.",
+                    wrong: "Belum Tepat! (0 Poin)\nBelah ketupat digunakan khusus untuk percabangan/keputusan logika. Terminal (lonjong) untuk Start/End, Persegi Panjang untuk Proses."
+                }
+            },
+
+            // -------------------- MISI 2: TIK (5 SOAL) --------------------
+            {
+                id: 2,
+                domain: "TIK",
+                badge: "MISI 2 / 4: TIK (SOAL 6/20)",
+                title: "Misi 2: Teknologi Informasi dan Komunikasi (TIK)",
+                story: "Walikota Stemsend Cyber meminta kamu membuat laporan keuangan lengkap di Pengolah Kata (Word Processor) yang secara otomatis memperbarui tabel & grafik jika data di Lembar Kerja (Spreadsheet) diubah.",
+                goal: "Memahami fitur OLE (Object Linking and Embedding) pada aplikasi perkantoran.",
+                question: "6. Teknologi integrasi aplikasi perkantoran yang memungkinkan grafik dari Spreadsheet terhubung secara dinamis (live update) di Pengolah Kata dinamakan...",
+                options: [
+                    { text: "A. Object Linking and Embedding (OLE) - Paste Link", correct: true },
+                    { text: "B. Plain Text Copy Paste", correct: false },
+                    { text: "C. Export to JPEG", correct: false },
+                    { text: "D. Save As Screen Capture", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nOLE dengan opsi 'Paste Link' menjaga hubungan antar-file sehingga perubahan data di spreadsheet sumber otomatis memperbarui tampilan di dokumen pengolah kata.",
+                    wrong: "Kurang Tepat! (0 Poin)\nPaste biasa atau gambar statis tidak akan terbarui secara otomatis. Fitur penghubung dinamis antar aplikasi office dinamakan OLE (Object Linking and Embedding)."
+                }
+            },
+            {
+                id: 2,
+                domain: "TIK",
+                badge: "MISI 2 / 4: TIK (SOAL 7/20)",
+                title: "Misi 2: Teknologi Informasi dan Komunikasi (TIK)",
+                story: "Bagian Administrasi Kota perlu mengirimkan 1.000 surat pemanggilan ujian sertifikasi digital dengan nama, alamat, dan nomor peserta yang berbeda-beda secara cepat.",
+                goal: "Memahami dan memanfaatkan fitur Mail Merge.",
+                question: "7. Fitur otomasi pada pengolah kata yang menggabungkan dokumen utama (template) dengan data sumber (database) untuk mencetak surat masal secara kustom adalah...",
+                options: [
+                    { text: "A. Mail Merge", correct: true },
+                    { text: "B. Track Changes", correct: false },
+                    { text: "C. AutoCorrect", correct: false },
+                    { text: "D. Table of Contents", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+5 Poin)\nMail Merge sangat efisien untuk membuat sertifikat, label, atau surat massal dengan memadukan template teks tunggal dan basis data penerima.",
+                    wrong: "Salah! (0 Poin)\nFitur otomasi pembuatan surat massal dengan sumber data terpisah dinamakan Mail Merge."
+                }
+            },
+
+            {
+                id: 2,
+                domain: "TIK",
+                badge: "MISI 2 / 4: TIK (SOAL 8/20)",
+                title: "Misi 2: Teknologi Informasi dan Komunikasi (TIK)",
+                story: "Kamu mengolah data absensi pegawai di aplikasi Spreadsheet. Kamu harus mengambil data 'Jabatan' berdasarkan 'ID Pegawai' dari tabel referensi lain secara presisi.",
+                goal: "Menggunakan fungsi LookUp (VLOOKUP / INDEX-MATCH) pada Spreadsheet.",
+                question: "8. Fungsi rumus spreadsheet manakah yang digunakan untuk mencari dan mengambil data dari suatu tabel referensi berdasarkan kunci pencarian di kolom pertama secara vertikal?",
+                options: [
+                    { text: "A. VLOOKUP", correct: true },
+                    { text: "B. COUNTIF", correct: false },
+                    { text: "C. SUMIF", correct: false },
+                    { text: "D. CONCATENATE", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+5 Poin)\nVLOOKUP (Vertical Lookup) mencari nilai pada kolom terbawa paling kiri dan mengembalikan nilai dari baris yang sama pada kolom tertentu.",
+                    wrong: "Salah! (0 Poin)\nCOUNTIF untuk menghitung jumlah sel berkonsep kriteria. Untuk pencarian data vertikal dari tabel referensi digunakan VLOOKUP."
+                }
+            },
+
+            {
+                id: 2,
+                domain: "TIK",
+                badge: "MISI 2 / 4: TIK (SOAL 9/20)",
+                title: "Misi 2: Teknologi Informasi dan Komunikasi (TIK)",
+                story: "Seorang desainer grafis membagikan karya fotonya di internet dengan lisensi Creative Commons yang mengizinkan orang lain mengunduh dan membagikan, namun melarang penggunaan komersial.",
+                goal: "Memahami Etika Digital, Hak Kekayaan Intelektual (HAKI), dan Lisensi Perangkat Lunak.",
+                question: "9. Jenis Lisensi Creative Commons yang melarang pihak lain memanfaatkan karya untuk tujuan mendapatkan keuntungan finansial/bisnis adalah...",
+                options: [
+                    { text: "A. NonCommercial (NC)", correct: true },
+                    { text: "B. Attribution (BY)", correct: false },
+                    { text: "C. NoDerivatives (ND)", correct: false },
+                    { text: "D. Public Domain (CC0)", correct: false }
+                ],
+                explanation: {
+                    correct: "Bagus! (+5 Poin)\nLisensi NonCommercial (NC) melarang penggunaan kembali suatu karya untuk tujuan komersial atau bisnis tanpa izin tertulis pencipta.",
+                    wrong: "Salah! (0 Poin)\nAttribution (BY) mewajibkan penyebutan nama pencipta. Keterangan melarang komersialisasi adalah NonCommercial (NC)."
+                }
+            },
+
+            {
+                id: 2,
+                domain: "TIK",
+                badge: "MISI 2 / 4: TIK (SOAL 10/20)",
+                title: "Misi 2: Teknologi Informasi dan Komunikasi (TIK)",
+                story: "Warga kota menerima email palsu yang mengatasnamakan Bank Kota Stemsend Cyber, meminta warga memasukkan password akun perbankan melalui link tautan jebakan.",
+                goal: "Mengenali kejahatan siber sosial (Phishing) dan antisipasi dampaknya.",
+                question: "10. Bentuk kejahatan siber yang menggunakan tipu daya pesan/email palsu untuk mencuri data sensitif (password/pin) dinamakan...",
+                options: [
+                    { text: "A. Phishing", correct: true },
+                    { text: "B. Ransomware", correct: false },
+                    { text: "C. Distributed Denial of Service (DDoS)", correct: false },
+                    { text: "D. Deface", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nPhishing mengelabui korban dengan menyamar sebagai institusi terpercaya untuk memancing (phish) kredensial rahasia pengguna.",
+                    wrong: "Salah! (0 Poin)\nRansomware menyandera/mengenkripsi berkas, DDoS membanjiri trafik. Penipuan dengan email/link palsu pencuri data dinamakan Phishing."
+                }
+            },
+
+            // -------------------- MISI 3: SISTEM KOMPUTER (5 SOAL) --------------------
+            {
+                id: 3,
+                domain: "SK",
+                badge: "MISI 3 / 4: SISTEM KOMPUTER (SOAL 11/20)",
+                title: "Misi 3: Sistem Komputer (SK)",
+                story: "Prosesor utama (CPU) pada server data pusat mengalami kelambatan pemrosesan hitungan matematika dasar dan operasi logika perbandingan data.",
+                goal: "Memahami struktur internal CPU: ALU vs Control Unit.",
+                question: "11. Komponen di dalam CPU yang bertugas khusus melakukan perhitungan aritmatika (penjumlahan/pengurangan) dan logika (AND, OR, NOT) adalah...",
+                options: [
+                    { text: "A. Arithmetic Logic Unit (ALU)", correct: true },
+                    { text: "B. Control Unit (CU)", correct: false },
+                    { text: "C. Register Memory", correct: false },
+                    { text: "D. Power Supply Unit (PSU)", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+5 Poin)\nALU (Arithmetic Logic Unit) adalah 'kalkulator' inti CPU yang mengeksekusi operasi matematika dan logika. Control Unit mengatur lalu lintas instruksi.",
+                    wrong: "Salah! (0 Poin)\nControl Unit (CU) mengarahkan lalu lintas data, sedangkan operasi matematika/logika dieksekusi oleh ALU (Arithmetic Logic Unit)."
+                }
+            },
+
+            {
+                id: 3,
+                domain: "SK",
+                badge: "MISI 3 / 4: SISTEM KOMPUTER (SOAL 12/20)",
+                title: "Misi 3: Sistem Komputer (SOAL 12/20)",
+                story: "Kamu menganalisis bagaimana CPU memproses satu baris kode perintah dari memori RAM hingga dieksekusi secara berulang.",
+                goal: "Memahami Siklus Eksekusi CPU (Fetch-Decode-Execute Cycle).",
+                question: "12. Urutan siklus kerja internal CPU yang benar dalam memproses instruksi program adalah...",
+                options: [
+                    { text: "A. Fetch (Mengambil) ➔ Decode (Menerjemahkan) ➔ Execute (Mengeksekusi)", correct: true },
+                    { text: "B. Execute ➔ Fetch ➔ Decode", correct: false },
+                    { text: "C. Decode ➔ Execute ➔ Fetch", correct: false },
+                    { text: "D. Store ➔ Delete ➔ Fetch", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+5 Poin)\nSiklus instruksi CPU selalu dimulai dari Fetch (mengambil instruksi dari RAM), Decode (menerjemahkan kode operasi), lalu Execute (menjalankan perintah).",
+                    wrong: "Salah! (0 Poin)\nUrutan standar CPU Instruction Cycle adalah Fetch (Ambil) ➔ Decode (Terjemahkan) ➔ Execute (Eksekusi)."
+                }
+            },
+
+            {
+                id: 3,
+                domain: "SK",
+                badge: "MISI 3 / 4: SISTEM KOMPUTER (SOAL 13/20)",
+                title: "Misi 3: Sistem Komputer (SK)",
+                story: "Prosesor modern dilengkapi dengan memori berkecepatan paling tinggi yang terletak sangat dekat dengan core prosesor untuk menyimpan data instruksi yang paling sering diakses.",
+                goal: "Memahami Hirarki Memori Komputer (RAM, ROM, Cache L1/L2/L3, Register).",
+                question: "13. Tingkatan memori volatil yang memiliki kecepatan akses paling cepat (hampir menyamai kecepatan core CPU) namun kapasitasnya sangat kecil dinamakan...",
+                options: [
+                    { text: "A. Cache Memory (L1 / L2 / L3)", correct: true },
+                    { text: "B. Hard Disk Drive (HDD)", correct: false },
+                    { text: "C. Main Memory (RAM)", correct: false },
+                    { text: "D. Flashdisk USB", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Jitu! (+5 Poin)\nCache Memory (L1/L2/L3) berada di antara Register dan RAM untuk memangkas jeda (latency) pemrosesan data CPU.",
+                    wrong: "Salah! (0 Poin)\nRAM lebih lambat dibanding Cache. Memori perantara super cepat tepat di dalam/dekat core CPU adalah Cache Memory."
+                }
+            },
+
+            {
+                id: 3,
+                domain: "SK",
+                badge: "MISI 3 / 4: SISTEM KOMPUTER (SOAL 14/20)",
+                title: "Misi 3: Sistem Komputer (SK)",
+                story: "Saat komputer pertama kali dinyalakan dari kondisi mati (Cold Booting), motherboard menjalankan firmware awal untuk mengecek ketersediaan hardware sebelum memuat OS Kernel.",
+                goal: "Memahami Proses Booting & Peran BIOS/UEFI.",
+                question: "14. Program tes mandiri saat booting untuk mengecek fungsi Keyboard, RAM, VGA, dan Storage terdeteksi dengan benar dinamakan...",
+                options: [
+                    { text: "A. POST (Power-On Self-Test)", correct: true },
+                    { text: "B. GUI (Graphical User Interface)", correct: false },
+                    { text: "C. Task Manager", correct: false },
+                    { text: "D. Disk Defragmenter", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nPOST (Power-On Self-Test) dijalankan oleh firmware BIOS/UEFI untuk memverifikasi seluruh komponen utama perangkat keras berfungsi sebelum OS di-load.",
+                    wrong: "Salah! (0 Poin)\nProses diagnosa hardware fisik awal saat komputer dinyalakan adalah POST (Power-On Self-Test)."
+                }
+            },
+
+            {
+                id: 3,
+                domain: "SK",
+                badge: "MISI 3 / 4: SISTEM KOMPUTER (SOAL 15/20)",
+                title: "Misi 3: Sistem Komputer (SK)",
+                story: "Kamu memasang kartu VGA baru di komputer, namun layar komputer tidak bisa menampilkan resolusi tinggi sampai kamu menginstal perangkat lunak penerjemah komunikasi antara OS dan hardware.",
+                goal: "Memahami peran Perangkat Lunak Penggerak (Device Driver).",
+                question: "15. Perangkat lunak khusus yang berfungsi sebagai jembatan penerjemah perintah antara Sistem Operasi dan Perangkat Keras (Hardware) tertentu dinamakan...",
+                options: [
+                    { text: "A. Device Driver", correct: true },
+                    { text: "B. Application Software", correct: false },
+                    { text: "C. Web Browser", correct: false },
+                    { text: "D. Utility Antivirus", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+5 Poin)\nDevice Driver memberi tahu OS cara berkomunikasi secara khusus dengan perangkat keras fisik (seperti Printer, VGA, atau Soundcard).",
+                    wrong: "Salah! (0 Poin)\nTanpa Device Driver, Sistem Operasi tidak dapat mengontrol fitur spesifik dari perangkat keras fisik yang terpasang."
+                }
+            },
+
+            // -------------------- MISI 4: JKI (5 SOAL) --------------------
+            {
+                id: 4,
+                domain: "JKI",
+                badge: "MISI 4 / 4: JARINGAN KOMPUTER & INTERNET (SOAL 16/20)",
+                title: "Misi 4: Jaringan Komputer & Internet (JKI)",
+                story: "Pusat komando membutuhkan topologi jaringan fisik yang memiliki tingkat toleransi kesalahan (Fault Tolerance) paling tinggi. Jika satu kabel terputus, lalu lintas data otomatis dialihkan lewat jalur lain.",
+                goal: "Menganalisis karakteristik Topologi Jaringan (Mesh vs Star vs Bus).",
+                question: "16. Topologi jaringan di mana setiap perangkat komputer terhubung langsung ke seluruh komputer lainnya (redundansi tinggi) dinamakan...",
+                options: [
+                    { text: "A. Topologi Mesh (Jala)", correct: true },
+                    { text: "B. Topologi Bus", correct: false },
+                    { text: "C. Topologi Ring (Cincin)", correct: false },
+                    { text: "D. Topologi Star (Bintang)", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nTopologi Mesh menyediakan jalur ganda (redundancy) antar node sehingga jika satu saluran putus, data tetap sampai melalui rute alternatif.",
+                    wrong: "Salah! (0 Poin)\nTopologi Star mengandalkan Central Switch/Hub. Topologi dengan jalur kabel langsung antar semua node dinamakan Mesh."
+                }
+            },
+
+            {
+                id: 4,
+                domain: "JKI",
+                badge: "MISI 4 / 4: JARINGAN KOMPUTER & INTERNET (SOAL 17/20)",
+                title: "Misi 4: Jaringan Komputer & Internet (JKI)",
+                story: "Kamu mengoreksi proses pengiriman data di mana router bekerja menentukan rute terbaik berdasarkan IP Address tujuan.",
+                goal: "Memahami Pemetaan Lapisan OSI Model (7 Layer).",
+                question: "17. Perangkat Router dan alamat logika IP Address bekerja pada lapisan (layer) manakah dalam Standar OSI 7 Layer?",
+                options: [
+                    { text: "A. Network Layer (Layer 3)", correct: true },
+                    { text: "B. Physical Layer (Layer 1)", correct: false },
+                    { text: "C. Data Link Layer (Layer 2)", correct: false },
+                    { text: "D. Application Layer (Layer 7)", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+5 Poin)\nLayer 3 (Network Layer) bertanggung jawab atas routing logis dan pengalamatan IP. (Layer 2 untuk MAC Address & Switch, Layer 1 untuk Kabel/Bit).",
+                    wrong: "Salah! (0 Poin)\nMAC Address berjalan di Layer 2 (Data Link), sedangkan IP Address dan Router bekerja di Layer 3 (Network Layer)."
+                }
+            },
+
+            {
+                id: 4,
+                domain: "JKI",
+                badge: "MISI 4 / 4: JARINGAN KOMPUTER & INTERNET (SOAL 18/20)",
+                title: "Misi 4: Jaringan Komputer & Internet (JKI)",
+                story: "Sebuah laboratorium sekolah memiliki blok alamat IP `192.168.10.0/26`. Kamu harus menghitung berapa jumlah maksimal Host/Komputer yang dapat dihubungkan dalam subnet tersebut.",
+                goal: "Kalkulasi Subnetting CIDR IPv4.",
+                question: "18. Jumlah IP Host usable (yang dapat dialokasikan ke komputer) pada prefix subnet CIDR `/26` adalah...",
+                options: [
+                    { text: "A. 62 Host (dari total 64 IP minus Network & Broadcast)", correct: true },
+                    { text: "B. 254 Host", correct: false },
+                    { text: "C. 126 Host", correct: false },
+                    { text: "D. 30 Host", correct: false }
+                ],
+                explanation: {
+                    correct: "Kalkulasi Presisi! (+5 Poin)\nNotasi `/26` memiliki 6 bit host ($2^6 = 64$ IP). Dikurangi 2 (1 IP Network + 1 IP Broadcast), menghasilkan 62 IP usable.",
+                    wrong: "Salah! (0 Poin)\n`/24` = 254 usable, `/25` = 126 usable, `/26` = 62 usable ($64 - 2$), `/27` = 30 usable."
+                }
+            },
+
+            {
+                id: 4,
+                domain: "JKI",
+                badge: "MISI 4 / 4: JARINGAN KOMPUTER & INTERNET (SOAL 19/20)",
+                title: "Misi 4: Jaringan Komputer & Internet (JKI)",
+                story: "Kamu mengonfigurasi tabel routing pada router utama agar paket data otomatis mencari rute tercepat yang masih aktif jika ada link yang putus.",
+                goal: "Membandingkan Protokol Routing Static vs Dynamic.",
+                question: "19. Protokol pengalamatan rute otomatis yang dapat menyesuaikan perubahan topologi jaringan secara dinamis dinamakan...",
+                options: [
+                    { text: "A. Dynamic Routing Protocol (contoh: OSPF / RIP)", correct: true },
+                    { text: "B. Static Routing Manual", correct: false },
+                    { text: "C. Direct Connecting Cable", correct: false },
+                    { text: "D. Manual IP Assign", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+5 Poin)\nDynamic Routing (seperti OSPF atau BGP) secara otomatis memperbarui tabel rute antar-router tanpa perlu intervensi manual administrator.",
+                    wrong: "Salah! (0 Poin)\nStatic Routing mewajibkan admin mengisi rute manual. Rute otomatis yang adaptif adalah Dynamic Routing Protocol."
+                }
+            },
+
+            {
+                id: 4,
+                domain: "JKI",
+                badge: "MISI 4 / 4: JARINGAN KOMPUTER & INTERNET (SOAL 20/20)",
+                title: "Misi 4: Jaringan Komputer & Internet (JKI)",
+                story: "Saat warga mengakses website resmi kota, ikon gembok muncul di browser menandakan bahwa koneksi data telah dienkripsi menggunakan protokol HTTPS.",
+                goal: "Memahami Enkripsi HTTPS SSL/TLS dan Keamanan Jaringan.",
+                question: "20. Protokol enkripsi yang digunakan HTTPS untuk mengamankan pertukaran data dari browser client ke server web adalah...",
+                options: [
+                    { text: "A. SSL / TLS (Secure Sockets Layer / Transport Layer Security)", correct: true },
+                    { text: "B. FTP Unencrypted", correct: false },
+                    { text: "C. Telnet Port 23", correct: false },
+                    { text: "D. HTTP Plaintext", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! Misi Selesai! (+5 Poin)\nSSL/TLS menyediakan enkripsi end-to-end, otentikasi sertifikat, dan integritas data pada protokol HTTPS.",
+                    wrong: "Salah! (0 Poin)\nHTTPS adalah gabungan dari HTTP biasa dengan protokol enkripsi SSL/TLS (Transport Layer Security)."
+                }
+            }
+        ];
+
+        // ==================== GAME STATE & VARIABLES ====================
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "Agent";
+        let playerClass = "Informatika";
+        let soundEnabled = true;
+        let totalSeconds = 30 * 60; // 30 minutes
+        let timerInterval = null;
+        let timeElapsedSeconds = 0;
+
+        // Score tracker per domain (BK, TIK, SK, JKI @ Max 25 Pts each)
+        let domainScores = {
+            BK: 0,
+            TIK: 0,
+            SK: 0,
+            JKI: 0
+        };
+
+        // ==================== AUDIO SYNTHESIZER (Web Audio API) ====================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(160, audioCtx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'victory') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                    osc.frequency.setValueAtTime(1046.50, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.6);
+                }
+            } catch(e) {
+                console.log("Audio Error:", e);
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                playSound('click');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        // ==================== TIMER ENGINE ====================
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    finishGame();
+                    return;
+                }
+                totalSeconds--;
+                timeElapsedSeconds++;
+                
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                document.getElementById('timerDisplay').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // ==================== GAME CONTROLLER ====================
+        function startGame(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('playerName').value.trim();
+            const classInput = document.getElementById('playerClass').value.trim();
+
+            if (nameInput) playerName = nameInput;
+            if (classInput) playerClass = classInput;
+
+            playSound('click');
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('sysUser').innerText = `Agent: ${playerName} (${playerClass})`;
+
+            currentQuestionIndex = 0;
+            score = 0;
+            domainScores = { BK: 0, TIK: 0, SK: 0, JKI: 0 };
+            updateScoreDisplay();
+            startTimer();
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('topScore').innerText = score;
+        }
+
+        function loadQuestion(index) {
+            const data = gameMissions[index];
+
+            // Update Progress Bar
+            const progressPercent = Math.round(((index + 1) / gameMissions.length) * 100);
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            // Reset Feedback Box
+            document.getElementById('feedbackBox').classList.add('hidden');
+
+            // Render Mission Info
+            document.getElementById('missionBadge').innerText = data.badge;
+            document.getElementById('missionTitle').innerText = data.title;
+            document.getElementById('missionStory').innerText = data.story;
+            document.getElementById('learningGoal').innerText = data.goal;
+            document.getElementById('questionText').innerText = data.question;
+
+            // Render Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            data.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyber-cyan text-slate-200 text-xs sm:text-sm font-mono transition-all duration-200 flex items-center justify-between group cursor-pointer shadow-sm";
+                btn.onclick = () => selectAnswer(optIdx);
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-cyber-cyan transition-all"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIndex) {
+            const currentData = gameMissions[currentQuestionIndex];
+            const isCorrect = currentData.options[selectedIndex].correct;
+            const optionsBtns = document.getElementById('optionsContainer').children;
+
+            // Disable all option buttons
+            for (let btn of optionsBtns) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+
+            const selectedBtn = optionsBtns[selectedIndex];
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackHeader = document.getElementById('feedbackHeader');
+            const feedbackText = document.getElementById('feedbackText');
+
+            const domain = currentData.domain;
+
+            if (isCorrect) {
+                score += 5; // 20 questions x 5 pts = 100 pts
+                domainScores[domain] += 5;
+                updateScoreDisplay();
+                playSound('correct');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green', 'font-bold');
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-green/10 border-cyber-green/50 text-cyber-green mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> JAWABAN BENAR! (+5 POIN)`;
+                feedbackText.innerText = currentData.explanation.correct;
+            } else {
+                playSound('wrong');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-red/20', 'border-cyber-red', 'text-cyber-red');
+
+                // Highlight correct answer
+                currentData.options.forEach((opt, idx) => {
+                    if (opt.correct) {
+                        optionsBtns[idx].classList.remove('opacity-60');
+                        optionsBtns[idx].classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green');
+                    }
+                });
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-red/10 border-cyber-red/50 text-cyber-red mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-xmark text-xl"></i> JAWABAN KURANG TEPAT!`;
+                feedbackText.innerText = currentData.explanation.wrong;
+            }
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < gameMissions.length) {
+                loadQuestion(currentQuestionIndex);
+            } else {
+                finishGame();
+            }
+        }
+
+        // ==================== FINAL EVALUATION & CERTIFICATE ====================
+        function finishGame() {
+            clearInterval(timerInterval);
+            playSound('victory');
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            // Set Student Metadata
+            document.getElementById('resPlayerName').innerText = playerName;
+            document.getElementById('resPlayerClass').innerText = playerClass;
+
+            const now = new Date();
+            document.getElementById('resDate').innerText = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()}`;
+
+            // Format Time Taken
+            const minutesTaken = Math.floor(timeElapsedSeconds / 60);
+            const secondsTaken = timeElapsedSeconds % 60;
+            document.getElementById('resTimeTaken').innerText = `${minutesTaken}m ${secondsTaken}s`;
+
+            document.getElementById('resFinalScore').innerText = score;
+
+            const resTitle = document.getElementById('resTitle');
+            const resReward = document.getElementById('resReward');
+
+            if (score >= 85) {
+                resTitle.innerText = "🏆 INFORMATICS SPECIALIST MASTER";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-green glow-text-green";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Sangat Memuaskan (A)</strong>
+                    <br>Selamat! Kamu telah menguasai penuh 20 indikator materi pokok Informatika mencakup Berpikir Komputasional, TIK, Sistem Komputer, serta Jaringan Komputer & Internet.
+                    <br><span class="text-cyber-yellow mt-1 block font-semibold">🎁 Rekomendasi Guru: Berhak mendapatkan Piagam Penghargaan Kelulusan Modul Informatika + Bebas 1x Tugas Harian.</span>
+                `;
+            } else if (score >= 65) {
+                resTitle.innerText = "⚡ CYBEROPS ASSOCIATE ENGINEER";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-cyan glow-text-cyan";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Baik (B)</strong>
+                    <br>Kamu memiliki pemahaman konsep informatika yang solid. Pelajari kembali poin-poin materi yang belum bernilai maksimal untuk meningkatkan kompetensi ke tingkat master.
+                    <br><span class="text-cyber-yellow mt-1 block font-semibold">🎁 Rekomendasi Guru: Lulus KKM Kriteria Ketuntasan dengan Nilai Tambahan Plus (+) pada Jurnal Praktikum.</span>
+                `;
+            } else {
+                resTitle.innerText = "🛠️ INFORMATICS TRAINEE";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-yellow";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Perlu Remedial / Pendalaman.</strong>
+                    <br>Kamu telah berusaha menyelesaikan 20 soal tantangan. Pelajari kembali ulasan pembahasan tiap soal di atas lalu konsultasikan materi yang sulit ke guru pengampu.
+                    <br><span class="text-slate-300 mt-1 block">💡 Saran: Klik tombol 'Ulangi Game' di bawah untuk memperbaiki skor kamu!</span>
+                `;
+            }
+
+            // Render Per-Domain Score Breakdown (BK, TIK, SK, JKI)
+            const breakdownContainer = document.getElementById('resMissionBreakdown');
+            breakdownContainer.innerHTML = '';
+
+            const domainNames = {
+                BK: "Berpikir Komputasional",
+                TIK: "Teknologi Inf. & Kom.",
+                SK: "Sistem Komputer",
+                JKI: "Jaringan & Internet"
+            };
+
+            Object.keys(domainScores).forEach((dKey) => {
+                const dScore = domainScores[dKey];
+                const item = document.createElement('div');
+                item.className = "bg-slate-900 p-2.5 rounded-lg border border-slate-800 text-center";
+                item.innerHTML = `
+                    <span class="text-slate-400 block text-[9px] font-semibold">${domainNames[dKey]}</span>
+                    <span class="font-title font-bold text-xs ${dScore >= 20 ? 'text-cyber-green' : dScore >= 15 ? 'text-cyber-cyan' : 'text-cyber-yellow'}">${dScore} / 25 Pts</span>
+                `;
+                breakdownContainer.appendChild(item);
+            });
+        }
+
+        function restartGame() {
+            playSound('click');
+            totalSeconds = 30 * 60;
+            timeElapsedSeconds = 0;
+            currentQuestionIndex = 0;
+            score = 0;
+            domainScores = { BK: 0, TIK: 0, SK: 0, JKI: 0 };
+            updateScoreDisplay();
+
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

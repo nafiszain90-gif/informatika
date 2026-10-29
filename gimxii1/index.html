@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberOps Academy XII: Cloud & Virtualization Master</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Cyber Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Orbitron & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#070a12',
+                            card: '#0f172a',
+                            border: '#1e293b',
+                            green: '#10b981',
+                            greenGlow: '#059669',
+                            cyan: '#06b6d4',
+                            purple: '#a855f7',
+                            yellow: '#f59e0b',
+                            red: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        title: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #070a12;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.12) 0%, transparent 70%),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(7, 10, 18, 0.95));
+            background-attachment: fixed;
+        }
+
+        /* Scanline Overlay Effect */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 50;
+            opacity: 0.6;
+        }
+
+        /* Neon Glow Effects */
+        .glow-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.6); }
+        .glow-text-green { text-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+        .glow-border-cyan { box-shadow: 0 0 15px rgba(6, 182, 212, 0.25); }
+        .glow-border-green { box-shadow: 0 0 15px rgba(16, 185, 129, 0.25); }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #070a12; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; background-image: none !important; }
+            .print-card { border: 2px solid #000 !important; color: #000 !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6 relative">
+    
+    <!-- Retro Scanline Effect -->
+    <div class="scanline no-print"></div>
+
+    <!-- Header Navigation Bar -->
+    <header class="w-full max-w-5xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-4 backdrop-blur-md flex flex-wrap justify-between items-center gap-2 z-10 shadow-lg glow-border-cyan">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyber-cyan to-cyber-purple flex items-center justify-center text-white text-xl font-bold shadow-md">
+                <i class="fa-solid fa-server"></i>
+            </div>
+            <div>
+                <h1 class="font-title text-xs sm:text-sm md:text-base font-black tracking-wider text-cyber-cyan glow-text-cyan">
+                    CYBEROPS XII: CLOUD & VPS
+                </h1>
+                <p class="text-[10px] sm:text-xs text-slate-400">Kurikulum SMK Merdeka / PPLG Kelas XII</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3 sm:gap-6 text-xs sm:text-sm">
+            <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-clock text-cyber-yellow"></i>
+                <span id="timerDisplay" class="font-bold text-cyber-yellow font-title">30:00</span>
+            </div>
+
+            <div class="bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-cyber-green"></i>
+                <span class="text-slate-400">Skor:</span>
+                <span id="topScore" class="font-bold text-cyber-green font-title">0</span>
+            </div>
+
+            <button onclick="toggleAudio()" id="soundBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-300 p-2 rounded-lg border border-slate-700 transition cursor-pointer" title="Toggle Sound">
+                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Content Container -->
+    <main class="w-full max-w-5xl mx-auto my-auto z-10 flex-grow flex items-center justify-center">
+
+        <!-- ==================== SCREEN 1: WELCOME SCREEN ==================== -->
+        <section id="welcomeScreen" class="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-5 sm:p-8 backdrop-blur-md shadow-2xl space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-block px-3 py-1 bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-full text-cyber-cyan text-xs font-semibold tracking-wider uppercase mb-1">
+                    Simulasi & Quiz Interaktif SMK Negeri 2 klaten PPLG XII
+                </div>
+                <h2 class="font-title text-xl sm:text-3xl font-extrabold text-white tracking-wide">
+                    Misi Penyelamatan Data Center Cloud
+                </h2>
+                <p class="text-slate-400 text-xs sm:text-sm max-w-2xl mx-auto leading-relaxed">
+                    Selamat datang, Calon Cloud Administrator! Perusahaan rintisan <strong class="text-cyber-cyan">StemsendCloud Enterprise</strong> sedang mengalami masalah infrastruktur server. Selesaikan 5 Misi Bertahap (Total 25 Soal Skenario) untuk membangun, mengamankan, dan mengoptimalkan Virtual Private Server (VPS) & Cloud Cluster!
+                </p>
+            </div>
+
+            <!-- Identitas Siswa Form -->
+            <form onsubmit="startGame(event)" class="max-w-md mx-auto space-y-4 bg-slate-950/80 p-5 rounded-xl border border-slate-800">
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 font-semibold">Nama Lengkap Siswa:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="playerName" required placeholder="Contoh: Ahmad Suruli" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pl-10 pr-3 text-sm text-white focus:outline-none focus:border-cyber-cyan transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1 font-semibold">Kelas / Rombel:</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-school absolute left-3.5 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="playerClass" required placeholder="Contoh: XII PPLG A" 
+                            class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 pl-10 pr-3 text-sm text-white focus:outline-none focus:border-cyber-cyan transition">
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" 
+                        class="w-full bg-gradient-to-r from-cyber-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-title font-bold py-3 rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5 cursor-pointer flex items-center justify-center gap-2 text-sm sm:text-base">
+                        <i class="fa-solid fa-play"></i> MULAI PERMAINAN (30 MENIT)
+                    </button>
+                </div>
+            </form>
+
+            <!-- Ringkasan Materi Misi -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 pt-2 text-[10px] sm:text-xs">
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-cubes text-cyber-cyan mb-1 text-sm block"></i>
+                    <span class="text-slate-300 font-semibold block">Misi 1</span>
+                    <span class="text-slate-500 text-[9px]">Fondasi Virtualisasi</span>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-cloud text-cyber-purple mb-1 text-sm block"></i>
+                    <span class="text-slate-300 font-semibold block">Misi 2</span>
+                    <span class="text-slate-500 text-[9px]">Manajemen VPS</span>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-network-wired text-cyber-yellow mb-1 text-sm block"></i>
+                    <span class="text-slate-300 font-semibold block">Misi 3</span>
+                    <span class="text-slate-500 text-[9px]">Network & Storage</span>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center">
+                    <i class="fa-solid fa-shield-halved text-cyber-green mb-1 text-sm block"></i>
+                    <span class="text-slate-300 font-semibold block">Misi 4</span>
+                    <span class="text-slate-500 text-[9px]">Deploy & Security</span>
+                </div>
+                <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-center col-span-2 sm:col-span-1">
+                    <i class="fa-solid fa-arrows-rotate text-cyber-red mb-1 text-sm block"></i>
+                    <span class="text-slate-300 font-semibold block">Misi 5</span>
+                    <span class="text-slate-500 text-[9px]">Backup & HA Cluster</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 2: GAMEPLAY SCREEN ==================== -->
+        <section id="gameScreen" class="w-full bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-6 backdrop-blur-md shadow-2xl space-y-5 hidden">
+            
+            <!-- Progress Bar Info -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-center text-xs">
+                    <span id="missionBadge" class="bg-cyber-cyan/10 border border-cyber-cyan/40 text-cyber-cyan px-2.5 py-1 rounded-md font-semibold">
+                        MISI 1 / 5 (SOAL 1/25)
+                    </span>
+                    <span id="sysUser" class="text-slate-400 font-mono">User: Cadet</span>
+                </div>
+                <!-- Bar Line -->
+                <div class="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800">
+                    <div id="progressBar" class="bg-gradient-to-r from-cyber-cyan to-cyber-green h-full w-[4%] transition-all duration-300"></div>
+                </div>
+            </div>
+
+            <!-- Card Misi & Skenario Soal -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 sm:p-5 space-y-3">
+                <div class="flex items-center gap-2 text-cyber-cyan text-xs font-bold uppercase tracking-wider">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span id="missionTitle">Misi 1: Fondasi Virtualisasi</span>
+                </div>
+
+                <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800/80 text-xs sm:text-sm text-slate-300 italic border-l-4 border-l-cyber-cyan">
+                    <i class="fa-solid fa-quote-left text-slate-600 mr-1"></i>
+                    <span id="missionStory">Story scenario goes here...</span>
+                </div>
+
+                <div class="pt-1">
+                    <span class="text-[10px] text-cyber-yellow bg-cyber-yellow/10 px-2 py-0.5 rounded border border-cyber-yellow/20 inline-block mb-1">
+                        🎯 Target Kompetensi:
+                    </span>
+                    <p id="learningGoal" class="text-xs text-slate-400 font-sans">Tujuan pembelajaran...</p>
+                </div>
+            </div>
+
+            <!-- Teks Pertanyaan -->
+            <div class="space-y-3">
+                <h3 id="questionText" class="text-sm sm:text-base font-semibold text-white leading-relaxed">
+                    Pertanyaan soal akan muncul di sini...
+                </h3>
+
+                <!-- Pilihan Jawaban (A, B, C, D) -->
+                <div id="optionsContainer" class="grid grid-cols-1 gap-2.5 pt-1">
+                    <!-- Buttons inserted dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Umpan Balik / Edukasi Box -->
+            <div id="feedbackBox" class="rounded-xl p-4 border bg-slate-950 border-slate-800 space-y-2 hidden">
+                <div id="feedbackHeader" class="font-title text-xs sm:text-sm font-bold flex items-center gap-2">
+                    <!-- Dynamic Header -->
+                </div>
+                <p id="feedbackText" class="text-xs sm:text-sm text-slate-300 leading-relaxed font-sans">
+                    <!-- Dynamic Explanation -->
+                </p>
+                <div class="pt-2 flex justify-end">
+                    <button onclick="nextMission()" 
+                        class="bg-cyber-cyan hover:bg-cyan-400 text-slate-950 font-title font-bold px-5 py-2 rounded-lg text-xs sm:text-sm transition cursor-pointer flex items-center gap-2">
+                        LANJUTKAN MISI <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== SCREEN 3: CERTIFICATE / RESULT ==================== -->
+        <section id="resultScreen" class="w-full bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-8 backdrop-blur-md shadow-2xl space-y-6 hidden">
+            
+            <!-- Certificate Layout Card -->
+            <div id="certificateArea" class="print-card bg-slate-950 border-2 border-cyber-cyan/50 rounded-2xl p-5 sm:p-8 relative overflow-hidden space-y-6 glow-border-cyan">
+                <!-- Background Watermark -->
+                <div class="absolute -right-10 -bottom-10 text-slate-900 opacity-20 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+
+                <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-[10px] sm:text-xs text-cyber-cyan font-title font-bold tracking-widest block">PIAGAM EVALUASI KOMPETENSI</span>
+                        <h2 class="text-lg sm:text-2xl font-title font-black text-white">CYBEROPS ACADEMY XII</h2>
+                        <p class="text-[10px] sm:text-xs text-slate-400">Teknik Komputer dan Jaringan - Virtualisasi & Cloud VPS</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs text-slate-400 block">Tanggal Selesai:</span>
+                        <span id="resDate" class="text-xs sm:text-sm text-white font-mono font-bold">28/10/2026</span>
+                    </div>
+                </div>
+
+                <!-- Info Murid & Skor -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-900/80 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Nama Siswa:</span>
+                        <span id="resPlayerName" class="text-sm sm:text-base font-bold text-white font-title">Cadet Name</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Kelas:</span>
+                        <span id="resPlayerClass" class="text-sm sm:text-base font-bold text-cyber-cyan font-title">XII TKJ 1</span>
+                    </div>
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase block">Waktu Pengerjaan:</span>
+                        <span id="resTimeTaken" class="text-sm sm:text-base font-bold text-cyber-yellow font-title">12m 45s</span>
+                    </div>
+                </div>
+
+                <!-- Final Badge & Score -->
+                <div class="text-center py-2 space-y-2">
+                    <span class="text-xs text-slate-400 uppercase tracking-widest">Predikat Competency Level</span>
+                    <div id="resTitle" class="font-title text-xl sm:text-3xl font-black text-cyber-green glow-text-green">
+                        🏆 MASTER CLOUD & VPS ADMIN
+                    </div>
+                    <div class="flex justify-center items-baseline gap-2 pt-1">
+                        <span class="text-slate-400 text-xs">Total Skor:</span>
+                        <span id="resFinalScore" class="font-title text-2xl sm:text-4xl font-extrabold text-white">100</span>
+                        <span class="text-slate-500 text-sm">/ 100</span>
+                    </div>
+                </div>
+
+                <!-- Feedback & Catatan Evaluasi -->
+                <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed" id="resReward">
+                    Catatan evaluasi akan diproses...
+                </div>
+
+                <!-- Rincian Hasil Per Misi -->
+                <div class="space-y-2">
+                    <span class="text-xs text-slate-400 font-bold block">Ringkasan Perolehan Poin Per Misi:</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 text-[11px]" id="resMissionBreakdown">
+                        <!-- Dynamic inserted per-mission breakdown -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-wrap justify-center sm:justify-end gap-3 no-print">
+                <button onclick="window.print()" 
+                    class="bg-slate-800 hover:bg-slate-700 text-white font-title font-bold px-5 py-2.5 rounded-xl text-xs sm:text-sm border border-slate-700 transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan PDF
+                </button>
+                <button onclick="restartGame()" 
+                    class="bg-cyber-cyan hover:bg-cyan-400 text-slate-950 font-title font-bold px-6 py-2.5 rounded-xl text-xs sm:text-sm transition cursor-pointer flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Lagi / Ulang
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-5xl mx-auto text-center text-[10px] sm:text-xs text-slate-600 py-3 z-10 no-print">
+        CyberOps Academy XII &copy; SMK Negeri 2 Klaten - Game Edukasi Virtualisasi & VPS
+    </footer>
+
+    <!-- JavaScript Game Engine -->
+    <script>
+        // ==================== GAME DATA: 5 MISSIONS x 5 QUESTIONS = 25 TOTAL QUESTIONS ====================
+        const gameMissions = [
+            // -------------------- MISI 1: FONDASI VIRTUALISASI (5 SOAL) --------------------
+            {
+                id: 1,
+                badge: "MISI 1 / 5: VIRTUALISASI (SOAL 1/25)",
+                title: "Misi 1: Fondasi Virtualisasi",
+                story: "Perusahaan NusaCloud ingin menggabungkan 10 server fisik tua yang boros listrik menjadi 1 server fisik berkinerja tinggi. Kamu ditugaskan merancang fondasi virtualisasi.",
+                goal: "Memahami konsep Hardware Abstraction & Resource Isolation pada Virtualisasi.",
+                question: "1. Apa fungsi utama teknologi virtualisasi server dalam kaitannya dengan perangkat keras (hardware)?",
+                options: [
+                    { text: "A. Membagi daya komputasi hardware fisik menjadi beberapa lingkungan komputer virtual independen (Virtual Machine).", correct: true },
+                    { text: "B. Mempercepat kecepatan koneksi kabel fiber optik secara otomatis.", correct: false },
+                    { text: "C. Mengganti VGA card fisik dengan kartu grafis virtual untuk gaming.", correct: false },
+                    { text: "D. Menghapus kebutuhan sistem operasi pada komputer.", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nVirtualisasi melakukan abstraksi perangkat keras sehingga satu fisik server dapat menjalankan banyak Virtual Machine (VM) yang terisolasi satu sama lain.",
+                    wrong: "Kurang Tepat! (0 Poin)\nVirtualisasi tidak mengubah hardware fisik, melainkan membagi sumber daya fisik (CPU, RAM, Storage) menjadi beberapa komputer virtual (VM)."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: VIRTUALISASI (SOAL 2/25)",
+                title: "Misi 1: Fondasi Virtualisasi",
+                story: "Kamu membandingkan arsitektur KVM (Kernel-based Virtual Machine) dengan Docker Container untuk menentukan efisiensi alokasi memori sistem.",
+                goal: "Memahami perbedaan Full Virtualization (VM) dan Containerization (Docker).",
+                question: "2. Manakah perbedaan mendasar antara Virtual Machine (VM) tradisional dan Container (seperti Docker)?",
+                options: [
+                    { text: "A. VM membutuhkan OS Tamu (Guest OS) lengkap masing-masing, sedangkan Container berbagi OS Kernel milik Host.", correct: true },
+                    { text: "B. Container berjalan lebih lambat dibanding VM karena memakan banyak RAM.", correct: false },
+                    { text: "C. VM tidak menggunakan RAM sama sekali dari server induk.", correct: false },
+                    { text: "D. Container memerlukan lisensi Windows Server berbayar.", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Tajam! (+4 Poin)\nVM mengisolasi hingga ke tingkat OS (tiap VM punya Guest OS lengkap), sedangkan Container hanya mengisolasi aplikasi di atas Kernel Host yang sama sehingga sangat ringan.",
+                    wrong: "Salah! (0 Poin)\nVM memerlukan Guest OS tersendiri di tiap instance, sedangkan Container berbagi Kernel Host yang sama sehingga boot-time jauh lebih cepat dan hemat RAM."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: VIRTUALISASI (SOAL 3/25)",
+                title: "Misi 1: Fondasi Virtualisasi",
+                story: "Kamu harus menginstal Hypervisor di Data Center yang akan berjalan langsung di atas bare-metal tanpa memerlukan sistem operasi desktop seperti Windows 11.",
+                goal: "Membedakan Hypervisor Type 1 (Bare-Metal) dan Type 2 (Hosted).",
+                question: "3. Manakah di bawah ini yang merupakan contoh Hypervisor Type 1 (Bare-Metal Hypervisor)?",
+                options: [
+                    { text: "A. Oracle VirtualBox", correct: false },
+                    { text: "B. VMware Workstation Player", correct: false },
+                    { text: "C. Proxmox VE / VMware ESXi", correct: true },
+                    { text: "D. Microsoft Paint 3D", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nProxmox VE dan VMware ESXi diinstal langsung di atas hardware fisik (Bare-Metal / Type 1), sedangkan VirtualBox & VMware Workstation berada di atas OS Host (Type 2).",
+                    wrong: "Belum Benar! (0 Poin)\nVirtualBox & VMware Workstation adalah Hosted Hypervisor (Type 2). Untuk server produksi data center digunakan Type 1 seperti Proxmox VE atau ESXi."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: VIRTUALISASI (SOAL 4/25)",
+                title: "Misi 1: Fondasi Virtualisasi",
+                story: "Saat membuat Virtual Machine baru di Proxmox VE, kamu mengalokasikan spesifikasi vCPU, vRAM, dan format berkas disk virtual untuk OS Debian.",
+                goal: "Mengenal komponen berkas disk virtual pada Virtual Machine.",
+                question: "4. Format berkas image disk virtual bawaan yang mendukung fitur Snapshot dan Copy-on-Write pada Hypervisor QEMU/KVM adalah...",
+                options: [
+                    { text: "A. .qcow2", correct: true },
+                    { text: "B. .exe", correct: false },
+                    { text: "C. .mp3", correct: false },
+                    { text: "D. .docx", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+4 Poin)\nFormat `.qcow2` (QEMU Copy-On-Write v2) adalah standar fleksibel di KVM/Proxmox yang mendukung snapshot dan alokasi penyimpanan dinamis.",
+                    wrong: "Salah! (0 Poin)\nFormat disk virtual standar untuk KVM/QEMU adalah `.qcow2`. (`.vmdk` digunakan VMware, `.vhd` digunakan Hyper-V)."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: VIRTUALISASI (SOAL 5/25)",
+                title: "Misi 1: Fondasi Virtualisasi",
+                story: "Manajer Keuangan meminta laporan efisiensi setelah data center diubah dari server fisik ke sistem ter-virtualisasi.",
+                goal: "Memahami keuntungan teknis dan ekonomis penerapan virtualisasi.",
+                question: "5. Manakah keuntungan utama migrasi server fisik ke lingkungan virtualisasi bagi perusahaan?",
+                options: [
+                    { text: "A. Penghematan biaya daya listrik, ruang rack server, dan konsolidasi hardware.", correct: true },
+                    { text: "B. Menghilangkan kebutuhan koneksi internet.", correct: false },
+                    { text: "C. Mencegah seluruh jenis serangan hacker secara otomatis.", correct: false },
+                    { text: "D. Membuat hardware server fisik tidak bisa rusak selamanya.", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nVirtualisasi menghemat ruang rack, konsumsi listrik/AC, serta memaksimalkan utilisasi hardware server fisik hingga 80-90%.",
+                    wrong: "Belum Benar! (0 Poin)\nKeunggulan utama virtualisasi adalah efisiensi energi, konsolidasi hardware fisik, dan kemudahan manajemen."
+                }
+            },
+
+            // -------------------- MISI 2: MANAJEMEN VPS (5 SOAL) --------------------
+            {
+                id: 2,
+                badge: "MISI 2 / 5: MANAJEMEN VPS (SOAL 6/25)",
+                title: "Misi 2: Pengenalan & Manajemen VPS",
+                story: "NusaCloud berencana menyewakan Cloud Server. Kamu harus menjelaskan opsi produk antara Shared Hosting, VPS, dan Dedicated Server ke pelanggan.",
+                goal: "Memahami posisi VPS dibanding Shared Hosting & Dedicated Server.",
+                question: "6. Apa keunggulan VPS (Virtual Private Server) dibanding Shared Hosting biasa?",
+                options: [
+                    { text: "A. Memiliki Root Access penuh dan alokasi resource (RAM/CPU) yang terisolasi khusus untuk pengguna.", correct: true },
+                    { text: "B. Harganya selalu jauh lebih murah daripada Shared Hosting.", correct: false },
+                    { text: "C. Tidak memerlukan alamat IP sama sekali.", correct: false },
+                    { text: "D. Pengguna tidak perlu melakukan konfigurasi apa pun.", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nVPS memberikan akses Root/Administrator bebas serta batas resource RAM & CPU dedicated yang tidak terganggu oleh pengguna lain di server fisik yang sama.",
+                    wrong: "Kurang Tepat! (0 Poin)\nShared Hosting membagi resource tanpa akses root. VPS memberikan hak akses Root penuh dan resource terisolasi."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: MANAJEMEN VPS (SOAL 7/25)",
+                title: "Misi 2: Pengenalan & Manajemen VPS",
+                story: "Beberapa penyewa VPS berbagi satu server fisik raksasa secara aman tanpa bisa mengintip file milik tenant lain.",
+                goal: "Memahami konsep arsitektur Multi-Tenancy pada Cloud Provider.",
+                question: "7. Istilah arsitektur di mana satu infrastruktur hardware fisik melayani banyak pelanggan (tenant) secara terisolasi adalah...",
+                options: [
+                    { text: "A. Multi-Tenancy Architecture", correct: true },
+                    { text: "B. Single-User Mode", correct: false },
+                    { text: "C. Peer-to-Peer Network", correct: false },
+                    { text: "D. Standalone System", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nMulti-Tenancy adalah fondasi utama layanan Cloud Provider di mana sumber daya fisik dibagi ke banyak penyewa secara terisolasi dan aman.",
+                    wrong: "Salah! (0 Poin)\nKonsep penyewaan infrastruktur bersama bagi banyak pengguna secara terisolasi dinamakan Multi-Tenancy."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: MANAJEMEN VPS (SOAL 8/25)",
+                title: "Misi 2: Pengenalan & Manajemen VPS",
+                story: "Sebuah toko online berkonsep e-commerce memperkirakan ada 50.000 pengunjung per hari. Kamu harus memilih paket spesifikasi VPS yang ideal.",
+                goal: "Menganalisis kebutuhan spesifikasi hardware VPS.",
+                question: "8. Komponen penyimpanan manakah pada spesifikasi VPS yang memberikan performa Read/Write I/O paling cepat untuk database e-commerce?",
+                options: [
+                    { text: "A. Storage HDD SATA 5400 RPM", correct: false },
+                    { text: "B. Storage SSD NVMe", correct: true },
+                    { text: "C. Flashdisk USB 2.0", correct: false },
+                    { text: "D. Pita Kaset Magnetik (Tape Drive)", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+4 Poin)\nSSD NVMe menggunakan jalur PCI Express dengan IOPS sangat tinggi, berkali-kali lipat lebih cepat dibanding SSD SATA apalagi HDD mekanis.",
+                    wrong: "Kurang Tepat! (0 Poin)\nNVMe (Non-Volatile Memory Express) adalah media penyimpanan tercepat saat ini untuk kecepatan I/O database tinggi pada VPS."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: MANAJEMEN VPS (SOAL 9/25)",
+                title: "Misi 2: Pengenalan & Manajemen VPS",
+                story: "Kamu ditugaskan memilih Cloud Provider global maupun lokal yang menyediakan deployment VPS instance dalam hitungan detik.",
+                goal: "Mengenal penyedia Cloud Infrastructure (IaaS) populer.",
+                question: "9. Manakah di antara pilihan berikut yang merupakan contoh Cloud Infrastructure Provider (IaaS)?",
+                options: [
+                    { text: "A. DigitalOcean / AWS / Biznet Gio", correct: true },
+                    { text: "B. WhatsApp / Telegram", correct: false },
+                    { text: "C. Adobe Photoshop / Canva", correct: false },
+                    { text: "D. Google Chrome / Mozilla Firefox", correct: false }
+                ],
+                explanation: {
+                    correct: "Bagus! (+4 Poin)\nDigitalOcean (Droplets), AWS (EC2), dan Biznet Gio adalah penyedia layanan IaaS (Infrastructure as a Service) untuk menyewa instance VPS.",
+                    wrong: "Salah! (0 Poin)\nPenyedia infrastruktur Cloud/VPS dikenal sebagai vendor IaaS seperti AWS, DigitalOcean, Linode, Compute Engine, atau Biznet Gio."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: MANAJEMEN VPS (SOAL 10/25)",
+                title: "Misi 2: Pengenalan & Manajemen VPS",
+                story: "Untuk mempermudah klien pemula mengelola database, domain, dan web server di VPS tanpa CLI, kamu memasang web control panel gratis.",
+                goal: "Mengenal Web Control Panel open-source untuk pengelolaan VPS.",
+                question: "10. Manakah aplikasi Control Panel open-source berbasis GUI yang populer digunakan untuk mengelola server VPS?",
+                options: [
+                    { text: "A. aaPanel / CyberPanel / Webmin", correct: true },
+                    { text: "B. Winamp", correct: false },
+                    { text: "C. Microsoft Word", correct: false },
+                    { text: "D. Wireshark", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\naaPanel, CyberPanel, cPanel, dan Webmin adalah Server Control Panel yang memudahkan manajemen web, database, dan SSL via antarmuka browser.",
+                    wrong: "Salah! (0 Poin)\nSoftware GUI pengelola server VPS adalah Web Control Panel seperti aaPanel, CyberPanel, cPanel, atau Webmin."
+                }
+            },
+
+            // -------------------- MISI 3: NETWORK & STORAGE (5 SOAL) --------------------
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NETWORK & STORAGE (SOAL 11/25)",
+                title: "Misi 3: Network & Storage Virtualisasi",
+                story: "Kamu mengonfigurasi kartu jaringan virtual pada VirtualBox agar Virtual Machine mendapat IP Address langsung dari router Wi-Fi lokal seolah-olah komputer fisik terpisah.",
+                goal: "Memahami perbedaan mode virtual network: Bridged Adapter.",
+                question: "11. Mode Virtual Network manakah yang membuat Virtual Machine (VM) terhubung langsung ke jaringan fisik dan memperoleh IP satu subnet dengan Host?",
+                options: [
+                    { text: "A. NAT (Network Address Translation)", correct: false },
+                    { text: "B. Bridged Adapter", correct: true },
+                    { text: "C. Host-Only Adapter", correct: false },
+                    { text: "D. Internal Network", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+4 Poin)\nBridged Adapter 'menjembatani' kartu fisik Host sehingga VM mendapatkan alamat IP unik dari DHCP server fisik lokal yang sama.",
+                    wrong: "Salah! (0 Poin)\nMode Bridged membuat VM sejajar dengan Host di jaringan lokal fisik. Mode NAT menyembunyikan IP VM di balik IP Host."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NETWORK & STORAGE (SOAL 12/25)",
+                title: "Misi 3: Network & Storage Virtualisasi",
+                story: "Di dalam hypervisor Proxmox VE, kamu ingin mengisolasi lalu lintas data segmen VLAN 10 (HRD) dan VLAN 20 (Keuangan) secara virtual.",
+                goal: "Memahami konsep Virtual Switch & VLAN pada Hypervisor.",
+                question: "12. Perangkat lunak switch virtual terpopuler di lingkungan Linux Server/Hypervisor untuk mengelola segmen VLAN adalah...",
+                options: [
+                    { text: "A. Open vSwitch (OVS)", correct: true },
+                    { text: "B. Windows Media Player", correct: false },
+                    { text: "C. Notepad++", correct: false },
+                    { text: "D. Cisco Packet Tracer Mobile", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nOpen vSwitch (OVS) adalah multilayer virtual switch open-source yang digunakan pada KVM/Proxmox untuk routing dan VLAN tagging.",
+                    wrong: "Kurang Tepat! (0 Poin)\nOpen vSwitch (OVS) adalah standar industri switch virtual untuk mengelola lalu lintas antar VM dan segmen VLAN."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NETWORK & STORAGE (SOAL 13/25)",
+                title: "Misi 3: Network & Storage Virtualisasi",
+                story: "Kamu membuat VM dengan alokasi disk 100 GB. Kamu tidak ingin 100 GB fisik langsung terpakai di awal, melainkan bertambah bertahap sesuai isi data.",
+                goal: "Membedakan Thin Provisioning dan Thick Provisioning.",
+                question: "13. Teknik alokasi virtual disk di mana kapasitas penyimpanan fisik hanya terpakai sebesar data aktual yang tersimpan dinamakan...",
+                options: [
+                    { text: "A. Thick Provisioning Lazy Zeroed", correct: false },
+                    { text: "B. Thin Provisioning", correct: true },
+                    { text: "C. Hard Provisioning", correct: false },
+                    { text: "D. Zero Allocation", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Bagus! (+4 Poin)\nThin Provisioning menghemat ruang fisik karena disk VM akan membesar secara fleksibel mengikuti pertumbuhan data riil.",
+                    wrong: "Salah! (0 Poin)\nThick Provisioning memotong kapasitas fisik di awal secara penuh. Thin Provisioning hanya menggunakan kapasitas sebesar data riil."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NETWORK & STORAGE (SOAL 14/25)",
+                title: "Misi 3: Network & Storage Virtualisasi",
+                story: "Tiga node server Proxmox butuh mengakses satu storage penyimpanan pusat bersama agar berkas disk VM bisa diakses oleh semua node.",
+                goal: "Memahami konsep Shared Storage (NFS / SAN / NAS).",
+                question: "14. Protokol atau teknologi penyimpanan bersama (shared storage) berbasis jaringan yang umum digunakan oleh cluster Hypervisor adalah...",
+                options: [
+                    { text: "A. NFS (Network File System) / iSCSI / Ceph", correct: true },
+                    { text: "B. CD-ROM IDE", correct: false },
+                    { text: "C. Cable AUX Audio", correct: false },
+                    { text: "D. Bluetooth File Sharing", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+4 Poin)\nNFS, iSCSI, dan Ceph SAN adalah solusi Shared Storage pusat agar banyak Hypervisor Node dapat mengakses file disk VM yang sama.",
+                    wrong: "Salah! (0 Poin)\nUntuk Shared Storage skala server/cluster digunakan protokol storage jaringan seperti NFS, iSCSI, atau Ceph."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NETWORK & STORAGE (SOAL 15/25)",
+                title: "Misi 3: Network & Storage Virtualisasi",
+                story: "VPS kamu berada di dalam VPC (Virtual Private Cloud) lokal dan butuh diakses dari internet publik.",
+                goal: "Memahami peran Static Public IP & Floating IP pada VPS.",
+                question: "15. Apa fungsi dari Alamat IP Publik Statis (Static Public IP) pada sebuah server VPS?",
+                options: [
+                    { text: "A. Agar VPS memiliki alamat unik yang konsisten dan dapat diakses publik dari seluruh dunia.", correct: true },
+                    { text: "B. Mengamankan password dari serangan fisik.", correct: false },
+                    { text: "C. Mempercepat render video di VPS.", correct: false },
+                    { text: "D. Mengubah OS Linux menjadi Windows secara otomatis.", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nIP Publik Statis tidak berubah-ubah saat server direstart, penting untuk pemetaan DNS domain web dan akses publik konsisten.",
+                    wrong: "Belum Benar! (0 Poin)\nIP Publik Statis berfungsi sebagai identitas unik permanen agar server VPS dapat selalu dijangkau oleh client internet."
+                }
+            },
+
+            // -------------------- MISI 4: DEPLOY & SECURITY (5 SOAL) --------------------
+            {
+                id: 4,
+                badge: "MISI 4 / 5: DEPLOY & SECURITY (SOAL 16/25)",
+                title: "Misi 4: Deployment & Keamanan VPS",
+                story: "Kamu baru saja menyewa VPS Ubuntu 22.04 LTS segar di Cloud Provider. Langkah pertama adalah melakukan provisioning dasar.",
+                goal: "Memahami langkah awal penyiapan (provisioning) OS VPS.",
+                question: "16. Langkah awal yang Wajib dilakukan sesaat setelah berhasil masuk (login) pertama kali ke VPS Linux baru adalah...",
+                options: [
+                    { text: "A. Memperbarui daftar repositori dan paket sistem (`apt update && apt upgrade`).", correct: true },
+                    { text: "B. Menginstal game berat.", correct: false },
+                    { text: "C. Langsung menghapus user root tanpa membuat cadangan.", correct: false },
+                    { text: "D. Mematikan seluruh layanan jaringan.", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+4 Poin)\n`apt update && apt upgrade` memastikan seluruh paket bawaan OS mendapatkan perbaikan bug dan patch keamanan terbaru.",
+                    wrong: "Salah! (0 Poin)\nSelalu perbarui repositori dan paket OS (`apt update && apt upgrade`) agar sistem memiliki patch keamanan paling mutakhir."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: DEPLOY & SECURITY (SOAL 17/25)",
+                title: "Misi 4: Deployment & Keamanan VPS",
+                story: "Kredensial password SSH rentan terhadap peretasan Brute Force. Tim Security mewajibkan penggunaan Kunci Kriptografi.",
+                goal: "Mengonfigurasi pengamanan SSH dengan SSH Key Pair.",
+                question: "17. Di manakah berkas `public_key.pub` harus disimpan agar client bisa login SSH tanpa password?",
+                options: [
+                    { text: "A. Di dalam direktori `~/.ssh/authorized_keys` pada VPS Server.", correct: true },
+                    { text: "B. Di folder Downloads laptop client.", correct: false },
+                    { text: "C. Di dalam Google Drive publik.", correct: false },
+                    { text: "D. Di situs forum internet.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nPublic Key diletakkan pada server di file `~/.ssh/authorized_keys`, sedangkan Private Key disimpan rahasia di laptop client.",
+                    wrong: "Salah! (0 Poin)\nPublic Key wajib dimasukkan ke file `~/.ssh/authorized_keys` di server VPS target."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: DEPLOY & SECURITY (SOAL 18/25)",
+                title: "Misi 4: Deployment & Keamanan VPS",
+                story: "Kamu ingin memblokir semua port masuk pada VPS Ubuntu kecuali Port 22 (SSH) dan Port 80/443 (Web).",
+                goal: "Memahami konfigurasi firewall UFW (Uncomplicated Firewall).",
+                question: "18. Perintah UFW yang tepat di Ubuntu untuk mengizinkan lalu lintas web aman HTTPS adalah...",
+                options: [
+                    { text: "A. `sudo ufw allow 443/tcp` atau `sudo ufw allow https`", correct: true },
+                    { text: "B. `sudo ufw block all`", correct: false },
+                    { text: "C. `sudo ufw delete web`", correct: false },
+                    { text: "D. `ping 443`", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\n`ufw allow 443/tcp` membuka port HTTPS pada firewall bawaan Ubuntu sehingga web terenkripsi SSL dapat diakses.",
+                    wrong: "Kurang Tepat! (0 Poin)\nPerintah UFW untuk membuka port HTTPS (443) adalah `sudo ufw allow 443/tcp`."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: DEPLOY & SECURITY (SOAL 19/25)",
+                title: "Misi 4: Deployment & Keamanan VPS",
+                story: "Bot peretas melakukan percobaan login SSH berkali-kali secara otomatis dari IP tak dikenal ke VPS kamu.",
+                goal: "Mengenal software proteksi intrusion prevention (Fail2ban).",
+                question: "19. Software pencegah intrusi (Intrusion Prevention) yang otomatis memblokir IP penyerang setelah beberapa kali gagal login SSH adalah...",
+                options: [
+                    { text: "A. Fail2ban", correct: true },
+                    { text: "B. VLC Player", correct: false },
+                    { text: "C. WinZIP", correct: false },
+                    { text: "D. CCleaner", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nFail2ban memantau log SSH (`/var/log/auth.log`) dan otomatis menambahkan aturan iptables untuk memblokir IP yang gagal login berkali-kali.",
+                    wrong: "Salah! (0 Poin)\nSoftware proteksi otomatis pemblokir IP jahat akibat percobaan Brute Force SSH adalah Fail2ban."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: DEPLOY & SECURITY (SOAL 20/25)",
+                title: "Misi 4: Deployment & Keamanan VPS",
+                story: "Untuk menyembunyikan service SSH dari pemindaian port otomatis (port scanning) bot hacker di port 22.",
+                goal: "Memahami praktik Hardening SSH Port.",
+                question: "20. Berkas konfigurasi manakah yang harus diubah pada Linux Debian/Ubuntu untuk mengganti Port SSH bawaan (22)?",
+                options: [
+                    { text: "A. `/etc/ssh/sshd_config`", correct: true },
+                    { text: "B. `/var/www/html/index.html`", correct: false },
+                    { text: "C. `/boot/grub/grub.cfg`", correct: false },
+                    { text: "D. `/etc/hosts.txt`", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nParameter `Port 22` di dalam file `/etc/ssh/sshd_config` diubah ke port khusus (misal 2222) lalu me-restart service `sshd`.",
+                    wrong: "Salah! (0 Poin)\nKonfigurasi utama SSH Daemon berada pada berkas `/etc/ssh/sshd_config`."
+                }
+            },
+
+            // -------------------- MISI 5: BACKUP, MIGRATION & HA (5 SOAL) --------------------
+            {
+                id: 5,
+                badge: "MISI 5 / 5: BACKUP & HA CLUSTER (SOAL 21/25)",
+                title: "Misi 5: Backup, Migration, & High Availability",
+                story: "Sebelum melakukan pembaruan versi database besar-besaran, kamu ingin mengambil 'foto' kondisi VM saat ini agar bisa di-restore dalam hitungan detik jika gagal.",
+                goal: "Membedakan Snapshot dan Backup penuh.",
+                question: "21. Apa perbedaan utama antara fitur Snapshot dan Backup biasa pada Virtual Machine?",
+                options: [
+                    { text: "A. Snapshot merekam status VM seketika (termasuk RAM) untuk rollback cepat, sedangkan Backup menyimpan salinan data utuh terpisah.", correct: true },
+                    { text: "B. Snapshot hanya bisa dilakukan saat server mati.", correct: false },
+                    { text: "C. Backup tidak memakan ruang penyimpanan sama sekali.", correct: false },
+                    { text: "D. Snapshot dan Backup adalah dua nama untuk fitur yang persis sama tanpa beda.", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Jitu! (+4 Poin)\nSnapshot menyimpan delta/keadaan VM saat itu untuk pemulihan cepat (point-in-time state), sedangkan Backup adalah cadangan penuh independen.",
+                    wrong: "Salah! (0 Poin)\nSnapshot difokuskan untuk rollback cepat titik keadaan VM, sedangkan Backup adalah salinan berkas independen untuk proteksi bencana jangka panjang."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: BACKUP & HA CLUSTER (SOAL 22/25)",
+                title: "Misi 5: Backup, Migration, & High Availability",
+                story: "Server fisik Node 1 harus dimatikan untuk perawatan hardware. Kamu harus memindahkan VM yang sedang berjalan ke Node 2 TANPA meredam koneksi pengguna.",
+                goal: "Memahami konsep Live Migration (vMotion / Proxmox Live Migrate).",
+                question: "22. Fitur pemindahan Virtual Machine yang sedang berjalan (running) antar server fisik tanpa mematikan VM atau mengalami downtime dinamakan...",
+                options: [
+                    { text: "A. Live Migration (misal: VMware vMotion / Proxmox Live Migration)", correct: true },
+                    { text: "B. Offline Export ISO", correct: false },
+                    { text: "C. Manual Copy Paste Explorer", correct: false },
+                    { text: "D. Direct Cable Upload", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+4 Poin)\nLive Migration memindahkan memori RAM dan status proses VM secara real-time antar host hypervisor via jaringan tanpa mengalami terputusnya layanan (zero downtime).",
+                    wrong: "Kurang Tepat! (0 Poin)\nFitur pemindahan VM hidup tanpa downtime antar node hypervisor dinamakan Live Migration."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: BACKUP & HA CLUSTER (SOAL 23/25)",
+                title: "Misi 5: Backup, Migration, & High Availability",
+                story: "Jika salah satu node hypervisor mendadak mati karena mati listrik, sistem cluster otomatis menyalakan ulang VM di node lain yang tersisa.",
+                goal: "Memahami High Availability (HA) pada Server Cluster.",
+                question: "23. Fitur otomatisasi pada Cluster Hypervisor yang bertugas mengambil alih running VM saat ada server fisik yang rusak/down dinamakan...",
+                options: [
+                    { text: "A. High Availability (HA) Failover", correct: true },
+                    { text: "B. Low Energy Mode", correct: false },
+                    { text: "C. Manual Reboot System", correct: false },
+                    { text: "D. Single Point of Failure", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nHA Failover memantau kesehatan node via heartbeat, dan otomatis menyalakan kembali VM di node aktif lain jika ada node yang mati tiba-tiba.",
+                    wrong: "Salah! (0 Poin)\nProses pengambilalihan beban server otomatis saat terjadi kegagalan hardware dinamakan High Availability (HA) Failover."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: BACKUP & HA CLUSTER (SOAL 24/25)",
+                title: "Misi 5: Backup, Migration, & High Availability",
+                story: "Gedung Data Center utama terkena gempa bumi. Perusahaan dapat memulihkan seluruh server dari cadangan lokasi geografis lain.",
+                goal: "Memahami Disaster Recovery Plan (DRP) & Offsite Backup.",
+                question: "24. Mengapa penting memiliki strategi Offsite Backup (salinan di lokasi luar gedung utama) dalam Disaster Recovery Plan (DRP)?",
+                options: [
+                    { text: "A. Agar data tetap selamat jika terjadi bencana alam atau kerusakan fisik total pada data center utama.", correct: true },
+                    { text: "B. Agar biaya langganan internet menjadi gratis.", correct: false },
+                    { text: "C. Agar karyawan tidak perlu bekerja lagi.", correct: false },
+                    { text: "D. Mempercepat tampilan warna layar monitor.", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nOffsite Backup memastikan keberlanjutan bisnis (Business Continuity) apabila lokasi fisik utama hancur akibat kebakaran/bencana alam.",
+                    wrong: "Salah! (0 Poin)\nOffsite Backup ditempatkan di lokasi geografis berbeda untuk mengamankan data saat lokasi utama mengalami bencana fisik."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: BACKUP & HA CLUSTER (SOAL 25/25)",
+                title: "Misi 5: Backup, Migration, & High Availability",
+                story: "VPS e-commerce mendadak lambat. Kamu membuka terminal dan menjalankan tools monitoring interaktif untuk melihat penggunaan CPU, RAM, dan proses teratas.",
+                goal: "Mengenal CLI Monitoring Tools di Linux Server (`htop`).",
+                question: "25. Perintah monitoring berbasis tekstual interaktif di terminal Linux yang menampilkan grafik penggunaan CPU, RAM, dan daftar proses secara real-time adalah...",
+                options: [
+                    { text: "A. `htop` atau `top`", correct: true },
+                    { text: "B. `ls -la`", correct: false },
+                    { text: "C. `mkdir`", correct: false },
+                    { text: "D. `pwd`", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! Misi Selesai! (+4 Poin)\nPerintah `htop` memberikan tampilan visual interaktif konsumsi resource CPU/RAM per core serta daftar proses yang memakan memori tinggi.",
+                    wrong: "Salah! (0 Poin)\n`ls` untuk melihat file, `mkdir` untuk folder. Tools monitoring resource proses real-time adalah `htop` atau `top`."
+                }
+            }
+        ];
+
+        // ==================== GAME STATE & VARIABLES ====================
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let playerName = "Cadet";
+        let playerClass = "XII TKJ";
+        let soundEnabled = true;
+        let totalSeconds = 30 * 60; // 30 minutes
+        let timerInterval = null;
+        let timeElapsedSeconds = 0;
+
+        // Score tracker per mission (Misi 1-5, @ 20 Pts Max)
+        let missionScores = [0, 0, 0, 0, 0];
+
+        // ==================== AUDIO SYNTHESIZER (Web Audio API) ====================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+                    gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(160, audioCtx.currentTime + 0.12);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) {
+                console.log("Audio Error:", e);
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                playSound('click');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+            }
+        }
+
+        // ==================== TIMER ENGINE ====================
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    finishGame();
+                    return;
+                }
+                totalSeconds--;
+                timeElapsedSeconds++;
+                
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                document.getElementById('timerDisplay').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // ==================== GAME CONTROLLER ====================
+        function startGame(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('playerName').value.trim();
+            const classInput = document.getElementById('playerClass').value.trim();
+
+            if (nameInput) playerName = nameInput;
+            if (classInput) playerClass = classInput;
+
+            playSound('click');
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('sysUser').innerText = `Admin: ${playerName} (${playerClass})`;
+
+            currentQuestionIndex = 0;
+            score = 0;
+            missionScores = [0, 0, 0, 0, 0];
+            updateScoreDisplay();
+            startTimer();
+            loadQuestion(currentQuestionIndex);
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('topScore').innerText = score;
+        }
+
+        function loadQuestion(index) {
+            const data = gameMissions[index];
+
+            // Update Progress Bar
+            const progressPercent = Math.round(((index + 1) / gameMissions.length) * 100);
+            document.getElementById('progressBar').style.width = `${progressPercent}%`;
+
+            // Reset Feedback Box
+            document.getElementById('feedbackBox').classList.add('hidden');
+
+            // Render Mission Info
+            document.getElementById('missionBadge').innerText = data.badge;
+            document.getElementById('missionTitle').innerText = data.title;
+            document.getElementById('missionStory').innerText = data.story;
+            document.getElementById('learningGoal').innerText = data.goal;
+            document.getElementById('questionText').innerText = data.question;
+
+            // Render Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            data.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyber-cyan text-slate-200 text-xs sm:text-sm font-mono transition-all duration-200 flex items-center justify-between group cursor-pointer shadow-sm";
+                btn.onclick = () => selectAnswer(optIdx);
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-cyber-cyan transition-all"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIndex) {
+            const currentData = gameMissions[currentQuestionIndex];
+            const isCorrect = currentData.options[selectedIndex].correct;
+            const optionsBtns = document.getElementById('optionsContainer').children;
+
+            // Disable all option buttons
+            for (let btn of optionsBtns) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+
+            const selectedBtn = optionsBtns[selectedIndex];
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackHeader = document.getElementById('feedbackHeader');
+            const feedbackText = document.getElementById('feedbackText');
+
+            // Determine Mission Index (0-4)
+            const mIdx = currentData.id - 1;
+
+            if (isCorrect) {
+                score += 4; // 25 questions x 4 pts = 100 pts
+                missionScores[mIdx] += 4;
+                updateScoreDisplay();
+                playSound('correct');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green', 'font-bold');
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-green/10 border-cyber-green/50 text-cyber-green mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> JAWABAN BENAR! (+4 POIN)`;
+                feedbackText.innerText = currentData.explanation.correct;
+            } else {
+                playSound('wrong');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-red/20', 'border-cyber-red', 'text-cyber-red');
+
+                // Highlight correct answer
+                currentData.options.forEach((opt, idx) => {
+                    if (opt.correct) {
+                        optionsBtns[idx].classList.remove('opacity-60');
+                        optionsBtns[idx].classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green');
+                    }
+                });
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-red/10 border-cyber-red/50 text-cyber-red mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-xmark text-xl"></i> JAWABAN KURANG TEPAT!`;
+                feedbackText.innerText = currentData.explanation.wrong;
+            }
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextMission() {
+            playSound('click');
+            currentQuestionIndex++;
+            if (currentQuestionIndex < gameMissions.length) {
+                loadQuestion(currentQuestionIndex);
+            } else {
+                finishGame();
+            }
+        }
+
+        // ==================== FINAL EVALUATION & CERTIFICATE ====================
+        function finishGame() {
+            clearInterval(timerInterval);
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            // Set Student Metadata
+            document.getElementById('resPlayerName').innerText = playerName;
+            document.getElementById('resPlayerClass').innerText = playerClass;
+
+            const now = new Date();
+            document.getElementById('resDate').innerText = `${now.getDate().toString().padStart(2,'0')}/${(now.getMonth()+1).toString().padStart(2,'0')}/${now.getFullYear()}`;
+
+            // Format Time Taken
+            const minutesTaken = Math.floor(timeElapsedSeconds / 60);
+            const secondsTaken = timeElapsedSeconds % 60;
+            document.getElementById('resTimeTaken').innerText = `${minutesTaken}m ${secondsTaken}s`;
+
+            document.getElementById('resFinalScore').innerText = score;
+
+            const resTitle = document.getElementById('resTitle');
+            const resReward = document.getElementById('resReward');
+
+            if (score >= 80) {
+                resTitle.innerText = "🏆 MASTER CLOUD & VPS ADMIN";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-green glow-text-green";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Sangat Memuaskan!</strong>
+                    <br>Selamat! Kamu telah menguasai penuh 25 indikator kompetensi dasar Virtualisasi (Bare-metal & Hosted), Manajemen Cloud VPS, Virtual Networking & Storage, Hardening Security (SSH Key/UFW/Fail2ban), hingga High Availability Cluster.
+                    <br><span class="text-cyber-yellow mt-1 block font-semibold">🎁 Rekomendasi Guru: Berhak mendapatkan Sertifikat Kelulusan Modul Cloud TKJ Kelas XII + Bebas 1x Tugas Praktikum.</span>
+                `;
+            } else if (score >= 60) {
+                resTitle.innerText = "⚡ CLOUD ENGINEER ASSOCIATE";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-cyan glow-text-cyan";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Baik!</strong>
+                    <br>Kamu memiliki pemahaman operasional yang baik mengenai Virtualisasi dan VPS. Tingkatkan lagi pemahaman mengenai konsep jaringan virtual (VLAN/OVS), Shared Storage, dan High Availability Cluster.
+                    <br><span class="text-cyber-yellow mt-1 block font-semibold">🎁 Rekomendasi Guru: Lulus KKM dengan Nilai Tambahan Plus (+) pada Jurnal Praktikum.</span>
+                `;
+            } else {
+                resTitle.innerText = "🛠️ JUNIOR SYSADMIN TRAINEE";
+                resTitle.className = "font-title text-xl sm:text-3xl font-black text-cyber-yellow";
+                resReward.innerHTML = `
+                    <strong class="font-bold text-white">Hasil Evaluasi: Perlu Pendalaman Remedial.</strong>
+                    <br>Kamu telah berusaha menyelesaikan 25 soal tantangan. Pelajari kembali modul perbedaan Hypervisor Type 1 vs Type 2, command UFW/Fail2ban, serta fungsi Snapshot/Live Migration.
+                    <br><span class="text-slate-300 mt-1 block">💡 Saran: Pelajari ulasan jawaban lalu klik tombol 'Main Lagi / Ulang' di bawah!</span>
+                `;
+            }
+
+            // Render Per-Mission Score Breakdown
+            const breakdownContainer = document.getElementById('resMissionBreakdown');
+            breakdownContainer.innerHTML = '';
+
+            const missionNames = ["Virtualisasi", "VPS Management", "Network & Storage", "Security & Deploy", "Backup & HA"];
+            
+            missionScores.forEach((mScore, idx) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-900 p-2 rounded-lg border border-slate-800 text-center";
+                item.innerHTML = `
+                    <span class="text-slate-400 block text-[9px] font-semibold">${missionNames[idx]}</span>
+                    <span class="font-title font-bold text-xs ${mScore >= 16 ? 'text-cyber-green' : mScore >= 12 ? 'text-cyber-cyan' : 'text-cyber-yellow'}">${mScore} / 20 Pts</span>
+                `;
+                breakdownContainer.appendChild(item);
+            });
+        }
+
+        function restartGame() {
+            playSound('click');
+            totalSeconds = 30 * 60;
+            timeElapsedSeconds = 0;
+            currentQuestionIndex = 0;
+            score = 0;
+            missionScores = [0, 0, 0, 0, 0];
+            updateScoreDisplay();
+
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberOps Academy: Misi Penyelamatan Jaringan</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: JetBrains Mono / Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#0a0e17',
+                            card: 'rgba(15, 23, 42, 0.85)',
+                            border: '#00ffcc',
+                            green: '#00ff66',
+                            cyan: '#00e5ff',
+                            magenta: '#ff007f',
+                            yellow: '#ffcc00',
+                            red: '#ff3366',
+                            dark: '#050811'
+                        }
+                    },
+                    fontFamily: {
+                        mono: ['"Fira Code"', 'monospace'],
+                        title: ['Orbitron', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #0a0e17;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 229, 255, 0.05) 0%, transparent 80%),
+                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: #e2e8f0;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(13, 20, 36, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 225, 255, 0.25);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 204, 0.15);
+        }
+
+        .glass-card-accent {
+            border: 1px solid rgba(0, 255, 102, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+        }
+
+        /* Scanline effect */
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.25) 50%,
+                rgba(0, 0, 0, 0.25)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.6;
+        }
+
+        /* Neon Glow Effects */
+        .glow-text-green { text-shadow: 0 0 8px rgba(0, 255, 102, 0.6); }
+        .glow-text-cyan { text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); }
+        .glow-text-magenta { text-shadow: 0 0 8px rgba(ff, 0, 127, 0.6); }
+        .glow-box-cyan { box-shadow: 0 0 12px rgba(0, 229, 255, 0.4); }
+
+        /* Terminal Cursor */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: #00ff66;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050811; }
+        ::-webkit-scrollbar-thumb { background: #00e5ff; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00ff66; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-2 sm:p-4 md:p-6 relative overflow-x-hidden selection:bg-cyber-cyan selection:text-black">
+
+    <!-- Scanline Visual Effect -->
+    <div class="scanline"></div>
+
+    <!-- Header Terminal Bar -->
+    <header class="max-w-4xl mx-auto w-full glass-card rounded-xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between border-b-2 border-cyber-cyan relative z-10">
+        <div class="flex items-center space-x-3">
+            <div class="flex space-x-1.5">
+                <span class="w-3 h-3 rounded-full bg-cyber-red inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-cyber-yellow inline-block"></span>
+                <span class="w-3 h-3 rounded-full bg-cyber-green inline-block"></span>
+            </div>
+            <h1 class="font-title text-base sm:text-xl font-bold text-cyber-cyan glow-text-cyan tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-terminal text-cyber-green"></i> CyberOps Academy
+            </h1>
+        </div>
+
+        <div class="flex items-center space-x-4 mt-2 sm:mt-0 text-xs sm:text-sm">
+            <button id="soundBtn" onclick="toggleAudio()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyber-cyan border border-cyber-cyan/40 transition-all flex items-center gap-1.5">
+                <i class="fa-solid fa-volume-high" id="soundIcon"></i>
+                <span id="soundText">SFX: ON</span>
+            </button>
+            <div class="bg-slate-900/80 px-3 py-1 rounded border border-cyber-green/30 text-cyber-green">
+                <i class="fa-solid fa-trophy mr-1 text-cyber-yellow"></i>
+                Skor: <span id="topScore">0</span>/100
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-4xl mx-auto w-full flex-1 flex flex-col justify-center relative z-10 my-auto">
+
+        <!-- SCREEN 1: WELCOME & PLAYER SETUP -->
+        <section id="welcomeScreen" class="glass-card rounded-2xl p-5 sm:p-8 space-y-6 border-t-4 border-cyber-green">
+            <div class="text-center space-y-3">
+                <div class="inline-block px-3 py-1 bg-cyber-green/10 text-cyber-green border border-cyber-green/40 rounded-full text-xs font-semibold uppercase tracking-widest mb-1">
+                    SMK Negeri 2 Klaten Kelas XI PPLG - Simulasi Jaringan
+                </div>
+                <h2 class="font-title text-2xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-cyber-green to-white glow-text-cyan">
+                    MISI PENYELAMATAN JARINNGAN
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+                    Selamat datang di PT Jaringan Nusantara! Server utama perusahaan mengalami masalah kritis. Sebagai <span class="text-cyber-green font-semibold">Junior SysAdmin</span>, kamu ditugaskan untuk mengonfigurasi dan mengamankan layanan jaringan utama.
+                </p>
+            </div>
+
+            <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-3 text-xs sm:text-sm text-slate-300">
+                <div class="text-cyber-cyan font-bold flex items-center gap-2 border-b border-slate-800 pb-2">
+                    <i class="fa-solid fa-clipboard-list"></i> BRIEFING PERMAINAN:
+                </div>
+                <ul class="space-y-1.5 list-disc list-inside text-slate-400">
+                    <li>Selesaikan <strong class="text-white">5 Misi Bertahap</strong> (NOS, SSH, NTP, FTP, Web Server).</li>
+                    <li>Estimasi durasi total pengerjaan: <strong class="text-cyber-yellow">Max 30 Menit</strong>.</li>
+                    <li>Tiap misi bernilai <strong class="text-cyber-green">20 Poin</strong>. Dapatkan gelar <strong class="text-cyber-cyan">Master SysAdmin</strong> dengan skor 100!</li>
+                    <li>Setiap tantangan dilengkapi pembahasan materi pembelajaran.</li>
+                </ul>
+            </div>
+
+            <form id="startForm" onsubmit="startGame(event)" class="space-y-4 max-w-md mx-auto pt-2">
+                <div>
+                    <label for="playerName" class="block text-xs uppercase tracking-wider text-cyber-cyan mb-2 font-bold">
+                        <i class="fa-solid fa-user-gear mr-1"></i> Masukkan Nama Cadet SysAdmin:
+                    </label>
+                    <input type="text" id="playerName" required maxlength="25" placeholder="Contoh: Ahmad_XIPPLG-A" 
+                        class="w-full bg-slate-950 border-2 border-cyber-cyan/50 focus:border-cyber-green rounded-xl px-4 py-3 text-cyber-green font-mono text-center text-lg outline-none transition-all shadow-inner placeholder-slate-600">
+                </div>
+                <button type="submit" class="w-full py-3.5 px-6 rounded-xl font-title font-bold text-black bg-gradient-to-r from-cyber-green via-cyber-cyan to-cyber-green bg-[length:200%_auto] hover:bg-right transition-all duration-500 shadow-lg glow-box-cyan flex items-center justify-center gap-2 text-base uppercase tracking-wider">
+                    <i class="fa-solid fa-play"></i> Mulai Misi Sekarang
+                </button>
+            </form>
+        </section>
+
+
+        <!-- SCREEN 2: GAMEPLAY MISSION (Hidden initially) -->
+        <section id="gameScreen" class="hidden space-y-4">
+
+            <!-- Mission Info Header -->
+            <div class="glass-card rounded-xl p-4 flex flex-wrap items-center justify-between gap-3 border-l-4 border-cyber-cyan">
+                <div>
+                    <div class="text-xs text-cyber-cyan uppercase tracking-wider flex items-center gap-2">
+                        <span id="missionBadge" class="bg-cyber-cyan/20 px-2 py-0.5 rounded border border-cyber-cyan/40">MISI 1 / 5</span>
+                        <span id="sysUser" class="text-slate-400">User: Admin</span>
+                    </div>
+                    <h3 id="missionTitle" class="font-title text-lg sm:text-xl font-bold text-white mt-0.5">
+                        Misi 1: Sistem Operasi Jaringan
+                    </h3>
+                </div>
+                <div class="flex items-center space-x-3 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                    <i class="fa-regular fa-clock text-cyber-yellow animate-pulse text-base"></i>
+                    <span id="timerDisplay" class="font-mono text-lg font-bold text-cyber-yellow">30:00</span>
+                </div>
+            </div>
+
+            <!-- Mission Content Card -->
+            <div class="glass-card rounded-2xl p-5 sm:p-7 space-y-5 relative overflow-hidden">
+                
+                <!-- Story / Scenario -->
+                <div class="bg-slate-950/90 rounded-xl p-4 border border-slate-800 space-y-2">
+                    <div class="text-xs text-cyber-green font-bold uppercase tracking-wider flex items-center gap-2 border-b border-slate-800/80 pb-1.5">
+                        <i class="fa-solid fa-database text-cyber-green"></i> Latar Situasi Lapangan:
+                    </div>
+                    <p id="missionStory" class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                        <!-- Dynamic Story Text -->
+                    </p>
+                </div>
+
+                <!-- Learning Objective Badge -->
+                <div class="flex items-start gap-2 text-xs bg-cyber-cyan/10 border border-cyber-cyan/30 rounded-lg p-2.5 text-cyber-cyan">
+                    <i class="fa-solid fa-lightbulb mt-0.5 text-cyber-yellow"></i>
+                    <div>
+                        <strong class="font-bold">Tujuan Pembelajaran:</strong> 
+                        <span id="learningGoal">Memahami konsep dasar NOS</span>
+                    </div>
+                </div>
+
+                <!-- Question Prompt -->
+                <div class="space-y-3 pt-1">
+                    <h4 id="questionText" class="text-base sm:text-lg font-bold text-white leading-snug">
+                        <!-- Question goes here -->
+                    </h4>
+
+                    <!-- Options Grid -->
+                    <div id="optionsContainer" class="grid grid-cols-1 gap-3 pt-2">
+                        <!-- Options buttons injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Feedback Drawer / Alert Box (Hidden until answer selected) -->
+                <div id="feedbackBox" class="hidden rounded-xl p-4 border transition-all duration-300 space-y-2">
+                    <div id="feedbackHeader" class="font-bold text-base flex items-center gap-2">
+                        <!-- Header Status -->
+                    </div>
+                    <p id="feedbackText" class="text-xs sm:text-sm leading-relaxed">
+                        <!-- Detailed Explanation -->
+                    </p>
+                    <button id="nextBtn" onclick="nextMission()" class="mt-3 px-5 py-2.5 rounded-lg bg-cyber-cyan text-black font-title font-bold hover:bg-cyber-green transition-all flex items-center gap-2 text-sm ml-auto shadow-md">
+                        Lanjut Misi Berikutnya <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- SCREEN 3: MISSION COMPLETION & DIPLOMA (Hidden initially) -->
+        <section id="resultScreen" class="hidden glass-card rounded-2xl p-6 sm:p-8 space-y-6 text-center border-t-4 border-cyber-yellow">
+            <div class="space-y-2">
+                <div id="resultBadge" class="inline-block px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-cyber-yellow/20 text-cyber-yellow border border-cyber-yellow/40">
+                    Laporan Akhir Misi
+                </div>
+                <h2 class="font-title text-2xl sm:text-3xl font-extrabold text-white">
+                    Sertifikat Kualifikasi CyberOps
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-400">
+                    Hasil evaluasi simulasi administrasi jaringan PT Jaringan Nusantara
+                </p>
+            </div>
+
+            <!-- Certificate Box -->
+            <div class="bg-slate-950/90 rounded-2xl p-6 border-2 border-cyber-cyan/40 space-y-5 text-left relative overflow-hidden shadow-2xl">
+                <!-- Background decorative watermark -->
+                <div class="absolute -right-10 -bottom-10 opacity-5 text-cyber-cyan pointer-events-none">
+                    <i class="fa-solid fa-shield-halved text-9xl"></i>
+                </div>
+
+                <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+                    <div>
+                        <div class="text-xs text-slate-500 uppercase">Nama Siswa / Cadet:</div>
+                        <div id="resPlayerName" class="font-title text-xl text-cyber-green font-bold">User Name</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-slate-500 uppercase">Waktu Selesai:</div>
+                        <div id="resTimeTaken" class="font-mono text-sm text-cyber-yellow">05:20 min</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2">
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400 mb-1">Total Poin Diperoleh:</div>
+                        <div class="font-title text-3xl font-extrabold text-cyber-cyan" id="resFinalScore">100 / 100</div>
+                    </div>
+                    <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                        <div class="text-xs text-slate-400 mb-1">Gelar Kompetensi:</div>
+                        <div class="font-title text-lg font-bold text-cyber-yellow" id="resTitle">Master SysAdmin</div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider">Apresiasi & Hadiah:</div>
+                    <div id="resReward" class="p-3 bg-cyber-green/10 border border-cyber-green/30 rounded-lg text-xs sm:text-sm text-cyber-green leading-relaxed">
+                        <!-- Reward Text -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3 pt-2">
+                <button onclick="restartGame()" class="px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold transition-all border border-slate-600 flex items-center justify-center gap-2 text-sm">
+                    <i class="fa-solid fa-rotate-right"></i> Coba Ulang Misi
+                </button>
+                <button onclick="window.print()" class="px-6 py-3 rounded-xl bg-cyber-cyan hover:bg-cyber-green text-black font-title font-bold transition-all flex items-center justify-center gap-2 text-sm shadow-lg glow-box-cyan">
+                    <i class="fa-solid fa-print"></i> Cetak / Simpan Hasil
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Terminal Status -->
+    <footer class="max-w-4xl mx-auto w-full text-center text-xs text-slate-500 py-3 mt-4 border-t border-slate-800/80 flex flex-wrap justify-between items-center gap-2 relative z-10">
+        <div>CyberOps Academy &copy; Modul Pembelajaran SMK Negeri 2 Klaten Kelas XI PPLG</div>
+        <div class="font-mono text-cyber-cyan/70">OS: Debian/Linux Server Edition</div>
+    </footer>
+
+   <!-- ... existing code ... -->
+    <!-- Game Logic JavaScript -->
+    <script>
+        // --- GAME DATA: 5 MISSIONS x 5 QUESTIONS = 25 TOTAL QUESTIONS ---
+        const gameMissions = [
+            // ==================== MISI 1: NOS (5 SOAL) ====================
+            {
+                id: 1,
+                badge: "MISI 1 / 5: NOS (SOAL 1/5)",
+                title: "Misi 1: Sistem Operasi Jaringan (NOS)",
+                story: "Server utama PT Jaringan Nusantara mengalami kerusuhan sistem. Sebagai Junior SysAdmin, kamu harus menentukan fondasi OS jaringan yang akan dipasang untuk mengoperasikan infrastruktur pusat data.",
+                goal: "Memahami definisi, peran, dan pilihan Sistem Operasi Jaringan (NOS).",
+                question: "1. Apa fungsi utama Sistem Operasi Jaringan (NOS) dibandingkan dengan OS Desktop biasa?",
+                options: [
+                    { text: "A. Mengatur lalu lintas jaringan, mengelola hak akses user, dan menyediakan layanan terpusat.", correct: true },
+                    { text: "B. Menjalankan game dengan performa grafis tinggi dan FPS maksimal.", correct: false },
+                    { text: "C. Mengolah dokumen kantor dan membuat presentasi multimedia secara offline.", correct: false },
+                    { text: "D. Mengedit video resolusi 4K secara cepat tanpa internet.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nNOS dirancang khusus untuk mengelola sumber daya jaringan, layanan terpusat (DHCP, DNS, File Sharing), serta otentikasi user dan keamanan jaringan.",
+                    wrong: "Belum Tepat! (0 Poin)\nFungsi game atau olah dokumen adalah tugas OS Desktop. NOS berfokus pada manajemen layanan terpusat, user access control, dan routing/traffic jaringan."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: NOS (SOAL 2/5)",
+                title: "Misi 1: Sistem Operasi Jaringan (NOS)",
+                story: "Direktur IT meminta server berjalan tanpa memakan banyak alokasi RAM dan CPU untuk antarmuka visual agar alokasi hardware fokus pada pemrosesan data.",
+                goal: "Memahami keunggulan mode CLI (Command Line Interface) pada NOS.",
+                question: "2. Mengapa mode CLI (text-based) lebih disukai untuk dikonfigurasi pada server skala besar dibanding mode GUI?",
+                options: [
+                    { text: "A. CLI memiliki tampilan lebih berwarna-warni dan indah.", correct: false },
+                    { text: "B. CLI hemat konsumsi RAM/CPU, lebih stabil, dan mudah diotomatisasi lewat script.", correct: true },
+                    { text: "C. CLI tidak memerlukan password untuk login admin.", correct: false },
+                    { text: "D. GUI tidak bisa digunakan sama sekali pada sistem operasi Linux.", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nMode CLI tidak membebankan rendering grafis windowing, sehingga hemat RAM/CPU, sangat stabil, dan mendukung skrip otomatisasi Shell/Bash.",
+                    wrong: "Kurang Tepat! (0 Poin)\nGUI bisa diinstal di Linux, tetapi memakan RAM/CPU cukup besar. Mode CLI dipilih pada server karena efisiensi resource dan stabilitasnya."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: NOS (SOAL 3/5)",
+                title: "Misi 1: Sistem Operasi Jaringan (NOS)",
+                story: "Perusahaan menginginkan NOS yang bersifat Open Source agar dapat dimodifikasi secara bebas tanpa biaya lisensi software yang mahal.",
+                goal: "Memahami konsep Open Source pada distribusi Linux Server.",
+                question: "3. Manakah di antara distro Linux berikut yang sangat populer digunakan sebagai Sistem Operasi Server karena ketahanan dan lisensi Open Source-nya?",
+                options: [
+                    { text: "A. Windows 11 Pro", correct: false },
+                    { text: "B. Debian GNU/Linux", correct: true },
+                    { text: "C. macOS Sonoma", correct: false },
+                    { text: "D. Android Enterprise", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+4 Poin)\nDebian (serta variannya seperti Ubuntu Server) adalah distro Linux open-source yang sangat legendaris, stabil, dan menjadi standar industri server dunia.",
+                    wrong: "Masih Salah! (0 Poin)\nWindows dan macOS bersifat proprietary/komersial. Distro Linux open-source yang andal untuk server adalah Debian GNU/Linux."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: NOS (SOAL 4/5)",
+                title: "Misi 1: Sistem Operasi Jaringan (NOS)",
+                story: "Kamu sedang membandingkan Windows Server dan Linux Server untuk menentukan arsitektur mana yang paling sesuai dengan kebutuhan sistem perusahaan.",
+                goal: "Membandingkan karakteristik Windows Server dan Linux Server.",
+                question: "4. Pernyataan manakah yang BENAR mengenai perbedaan Windows Server dan Linux Server?",
+                options: [
+                    { text: "A. Linux Server menggunakan Active Directory secara native bawaan pabrik.", correct: false },
+                    { text: "B. Windows Server bersifat gratis dan open source secara penuh.", correct: false },
+                    { text: "C. Windows Server umumnya menggunakan GUI dan Active Directory, sedangkan Linux mengandalkan CLI dan efisiensi resource.", correct: true },
+                    { text: "D. Linux Server tidak membutuhkan akses jaringan untuk beroperasi.", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nWindows Server unggul dalam integrasi GUI & Active Directory untuk ekosistem Windows, sedangkan Linux unggul dalam efisiensi CLI, fleksibilitas, dan lisensi open source.",
+                    wrong: "Belum Benar! (0 Poin)\nWindows Server menggunakan lisensi berbayar dan kaya akan GUI/Active Directory, sedangkan Linux dominan di CLI dan hemat resource."
+                }
+            },
+            {
+                id: 1,
+                badge: "MISI 1 / 5: NOS (SOAL 5/5)",
+                title: "Misi 1: Sistem Operasi Jaringan (NOS)",
+                story: "Sebagai persiapan sebelum instalasi NOS di server fisik, kamu harus memverifikasi konfigurasi repositori paket manajemen software di Debian.",
+                goal: "Memahami manajer paket utama pada Debian Linux Server.",
+                question: "5. Perintah (command) utama yang digunakan untuk menginstal dan mengelola paket aplikasi pada server Debian/Ubuntu adalah...",
+                options: [
+                    { text: "A. apt / apt-get", correct: true },
+                    { text: "B. setup.exe / install.msi", correct: false },
+                    { text: "C. npm install --global", correct: false },
+                    { text: "D. pip install network", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+4 Poin)\nAPT (Advanced Package Tool) dengan perintah `apt` atau `apt-get` adalah package manager standar untuk Debian dan turunan Linux-nya.",
+                    wrong: "Salah! (0 Poin)\n`.exe`/`.msi` adalah installer Windows. Untuk Linux Debian/Ubuntu, pengelola paket resminya adalah `apt` atau `apt-get`."
+                }
+            },
+
+            // ==================== MISI 2: SSH (5 SOAL) ====================
+            {
+                id: 2,
+                badge: "MISI 2 / 5: SSH (SOAL 1/5)",
+                title: "Misi 2: Remote Management via SSH",
+                story: "Server berada di ruang Data Center berpendingin tinggi. Kamu harus melakukan remote administrasi dari PC kerja tanpa lalu lintas komunikasi data disadap oleh pihak tak bertanggung jawab.",
+                goal: "Memahami fungsi utama protokol SSH (Secure Shell).",
+                question: "6. Apa keunggulan utama protokol SSH (Secure Shell) dibandingkan protokol Telnet dalam hal remote management?",
+                options: [
+                    { text: "A. SSH mengirimkan username dan password dalam teks biasa (plaintext).", correct: false },
+                    { text: "B. SSH mengenkripsi seluruh sesi komunikasi data dari client ke server.", correct: true },
+                    { text: "C. SSH tidak membutuhkan password saat awal login.", correct: false },
+                    { text: "D. SSH hanya bisa digunakan untuk mentransfer video resolusi tinggi.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nSSH menggunakan algoritma kriptografi untuk mengenkripsi seluruh data (termasuk kredensial login), mencegah eavesdropping dan packet sniffing.",
+                    wrong: "Kurang Tepat! (0 Poin)\nTelnet-lah yang mengirimkan data tanpa enkripsi (plaintext). SSH dibuat khusus untuk menggantikan Telnet dengan enkripsi penuh."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: SSH (SOAL 2/5)",
+                title: "Misi 2: Remote Management via SSH",
+                story: "Kamu mengatur firewall server untuk mengizinkan akses lalu lintas remote shell aman. Kamu harus membuka nomor port default untuk layanan SSH.",
+                goal: "Mengingat dan memahami nomor port standar SSH.",
+                question: "7. Berapakah nomor port default yang digunakan oleh layanan SSH (OpenSSH) pada transport layer (TCP)?",
+                options: [
+                    { text: "A. Port 21", correct: false },
+                    { text: "B. Port 22", correct: true },
+                    { text: "C. Port 23", correct: false },
+                    { text: "D. Port 80", correct: false }
+                ],
+                explanation: {
+                    correct: "Benar! (+4 Poin)\nSSH berjalan secara default pada TCP Port 22. (Port 21 untuk FTP, Port 23 untuk Telnet, Port 80 untuk HTTP).",
+                    wrong: "Salah! (0 Poin)\nPort 22 adalah port resmi terdaftar untuk SSH. Port 21 (FTP), Port 23 (Telnet), Port 80 (HTTP)."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: SSH (SOAL 3/5)",
+                title: "Misi 2: Remote Management via SSH",
+                story: "Untuk meningkatkan keamanan, tim security meminta kamu mengonfigurasi autentikasi SSH tanpa password menggunakan sepasang kunci kriptografi.",
+                goal: "Memahami konsep autentikasi SSH Key (Public & Private Key).",
+                question: "8. Kunci manakah yang disimpan di komputer client dan kunci mana yang wajib ditaruh di server (`authorized_keys`) pada metode SSH Key Authentication?",
+                options: [
+                    { text: "A. Private Key di Client, Public Key di Server.", correct: true },
+                    { text: "B. Public Key di Client, Private Key di Server.", correct: false },
+                    { text: "C. Kedua kunci ditaruh di Flashdisk server.", correct: false },
+                    { text: "D. Private Key dibagikan secara bebas ke seluruh pengguna internet.", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Tajam! (+4 Poin)\nPrivate Key dirahasiakan di client milikmu, sedangkan Public Key diunggah ke server (`~/.ssh/authorized_keys`) untuk mencocokkan autentikasi.",
+                    wrong: "Kurang Tepat! (0 Poin)\nPrivate Key bersikap rahasia dan HARUS berada di client. Public Key boleh disebar dan ditaruh pada server yang ingin diakses."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: SSH (SOAL 4/5)",
+                title: "Misi 2: Remote Management via SSH",
+                story: "Kamu menggunakan komputer dengan OS Windows di meja kerja dan ingin meremote server Linux Debian di Data Center.",
+                goal: "Mengenal aplikasi SSH Client populer di Windows.",
+                question: "9. Aplikasi SSH Client berbasis GUI yang sangat populer digunakan pada sistem operasi Windows untuk melakukan remote login SSH ke server adalah...",
+                options: [
+                    { text: "A. PuTTY / MobaXterm", correct: true },
+                    { text: "B. Microsoft Excel", correct: false },
+                    { text: "C. WinRAR", correct: false },
+                    { text: "D. Adobe Reader", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+4 Poin)\nPuTTY dan MobaXterm adalah aplikasi SSH/Telnet client yang standar digunakan para Network Engineer untuk mengakses terminal server jarak jauh dari Windows.",
+                    wrong: "Salah! (0 Poin)\nExcel, WinRAR, dan Adobe Reader bukan aplikasi remote terminal. PuTTY atau MobaXterm adalah software SSH Client khusus."
+                }
+            },
+            {
+                id: 2,
+                badge: "MISI 2 / 5: SSH (SOAL 5/5)",
+                title: "Misi 2: Remote Management via SSH",
+                story: "Seorang hacker mencoba melakukan Brute Force Attack menebak password SSH port 22 secara terus-menerus.",
+                goal: "Memahami langkah pengamanan (hardening) layanan SSH Server.",
+                question: "10. Langkah hardening (pengamanan) berikut yang PALING efektif untuk mencegah brute force attack pada layanan SSH adalah...",
+                options: [
+                    { text: "A. Mengubah nomor Port default SSH (misal dari 22 ke 2222) dan mematikan Password Authentication (menggunakan SSH Key).", correct: true },
+                    { text: "B. Mengubah password menjadi angka '123456'.", correct: false },
+                    { text: "C. Mematikan fitur enkripsi pada SSH.", correct: false },
+                    { text: "D. Mengaktifkan login root tanpa password sama sekali.", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nMengubah port default dari 22 ke port acak lain serta menonaktifkan login root/password (hanya mengizinkan SSH Key) adalah metode hardening standar di industri.",
+                    wrong: "Salah! (0 Poin)\nPassword pendek dan login root tanpa batas justru sangat berbahaya. Mengubah port dan mewajibkan SSH Key adalah solusi pengamanan terbaik."
+                }
+            },
+
+            // ==================== MISI 3: NTP (5 SOAL) ====================
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NTP (SOAL 1/5)",
+                title: "Misi 3: Time Synchronization via NTP",
+                story: "Log transaksi keuangan perusahaan mengalami pergeseran waktu beberapa menit antar server, mengakibatkan ketidakcocokan urutan data transaksi.",
+                goal: "Memahami fungsi mendasar NTP (Network Time Protocol).",
+                question: "11. Apa fungsi utama dari dipasangnya layanan NTP (Network Time Protocol) di lingkungan jaringan komputer?",
+                options: [
+                    { text: "A. Mempercepat koneksi bandwidth internet hingga 2x lipat.", correct: false },
+                    { text: "B. Menyinkronkan jam/waktu sistem pada seluruh perangkat komputer dalam jaringan secara terpusat.", correct: true },
+                    { text: "C. Mengubah format gambar dari JPG menjadi PNG secara otomatis.", correct: false },
+                    { text: "D. Memblokir situs web berbahaya.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nNTP berfungsi menyelaraskan jam (clock synchronization) pada seluruh host, server, dan router agar konsisten mengikuti standar UTC.",
+                    wrong: "Belum Benar! (0 Poin)\nNTP tidak berhubungan dengan kecepatan bandwidth atau blokir situs. Tugas utamanya adalah menyinkronkan jam/waktu sistem."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NTP (SOAL 2/5)",
+                title: "Misi 3: Time Synchronization via NTP",
+                story: "Kamu dikirim ke router/firewall untuk mengizinkan lalu lintas paket data NTP agar server dapat berkomunikasi dengan NTP Pool Internasional.",
+                goal: "Mengetahui nomor port dan protokol transport NTP.",
+                question: "12. NTP bekerja pada lapisan Transport menggunakan protokol UDP dengan nomor port standar...",
+                options: [
+                    { text: "A. Port 53", correct: false },
+                    { text: "B. Port 80", correct: false },
+                    { text: "C. Port 123", correct: true },
+                    { text: "D. Port 443", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nNTP memanfaatkan UDP Port 123 karena sifat UDP yang cepat dan minim overhead untuk pengiriman paket waktu yang berkala.",
+                    wrong: "Salah! (0 Poin)\nPort 53 untuk DNS, 80 untuk HTTP, 443 untuk HTTPS. Port khusus untuk NTP adalah UDP Port 123."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NTP (SOAL 3/5)",
+                title: "Misi 3: Time Synchronization via NTP",
+                story: "Saat melakukan forensik digital akibat insiden peretasan, bukti log dari beberapa server harus disatukan dalam urutan timeline yang sah.",
+                goal: "Memahami pentingnya timestamp pada log audit keamanan.",
+                question: "13. Mengapa sinkronisasi waktu NTP sangat penting dalam analisis log keamanan (security audit) saat terjadi peretasan?",
+                options: [
+                    { text: "A. Agar timestamp di log seluruh server sinkron sehingga kronologi serangan dapat direkonstruksi dengan akurat.", correct: true },
+                    { text: "B. Agar server tidak memakan banyak listrik saat malam hari.", correct: false },
+                    { text: "C. Agar hacker tidak bisa mengakses Command Prompt.", correct: false },
+                    { text: "D. Agar sistem operasi server terbarui secara otomatis tanpa restart.", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Bagus! (+4 Poin)\nTanpa NTP, timestamp di server A dan B bisa berbeda. Waktu yang sinkron memungkinkan investigator menyusun kronologi kejadian peretasan secara valid.",
+                    wrong: "Kurang Tepat! (0 Poin)\nNTP sangat krusial bagi forensik digital agar timestamp (catatan waktu) pada berkas log dari berbagai server berada pada skala waktu yang persis sama."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NTP (SOAL 4/5)",
+                title: "Misi 3: Time Synchronization via NTP",
+                story: "Kamu mengonfigurasi service NTP pada Debian Linux menggunakan paket software NTP terpopuler.",
+                goal: "Mengenal paket/aplikasi NTP Service di Linux Debian.",
+                question: "14. Paket perangkat lunak NTP server/client terpopuler dan modern yang biasa digunakan pada Linux Debian adalah...",
+                options: [
+                    { text: "A. ntp / chrony", correct: true },
+                    { text: "B. apache2 / nginx", correct: false },
+                    { text: "C. vsftpd / proftpd", correct: false },
+                    { text: "D. bind9 / dnsmasq", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+4 Poin)\n`ntp` daemon dan `chrony` adalah dua layanan NTP populer di Linux yang bertugas melakukan sinkronisasi jam secara terus-menerus.",
+                    wrong: "Salah! (0 Poin)\nApache/Nginx adalah Web Server, Vsftpd adalah FTP Server, BIND9 adalah DNS. Service NTP menggunakan `ntp` atau `chrony`."
+                }
+            },
+            {
+                id: 3,
+                badge: "MISI 3 / 5: NTP (SOAL 5/5)",
+                title: "Misi 3: Time Synchronization via NTP",
+                story: "Di hirarki NTP, terdapat tingkatan strata dari jam atom utama hingga ke client lokal.",
+                goal: "Memahami tingkatan hirarki (Stratum) pada NTP.",
+                question: "15. Istilah tingkatan akurasi jam pada NTP dinamakan 'Stratum'. Manakah Stratum yang terhubung langsung dengan sumber waktu presisi tinggi seperti Jam Atom atau GPS?",
+                options: [
+                    { text: "A. Stratum 0", correct: true },
+                    { text: "B. Stratum 10", correct: false },
+                    { text: "C. Stratum 100", correct: false },
+                    { text: "D. Stratum Infinity", correct: false }
+                ],
+                explanation: {
+                    correct: "Hebat! (+4 Poin)\nStratum 0 adalah referensi waktu fisik presisi mutlak (Jam Atom/GPS). Stratum 1 adalah server yang terhubung langsung ke Stratum 0.",
+                    wrong: "Salah! (0 Poin)\nHirarki NTP dimulai dari Stratum 0 (sumber waktu fisik seperti Jam Atomik/GPS Satelit)."
+                }
+            },
+
+            // ==================== MISI 4: FTP (5 SOAL) ====================
+            {
+                id: 4,
+                badge: "MISI 4 / 5: FTP (SOAL 1/5)",
+                title: "Misi 4: File Transfer Protocol (FTP)",
+                story: "Tim desain web membutuhkan sarana untuk mengunggah berkas gambar dan template ke dalam folder server perusahaan secara cepat.",
+                goal: "Memahami fungsi dasar FTP (File Transfer Protocol).",
+                question: "16. Apa fungsi utama dari protokol FTP dalam arsitektur jaringan komputer?",
+                options: [
+                    { text: "A. Mengirim email antar pengguna komputer.", correct: false },
+                    { text: "B. Melakukan pertukaran berkas (upload dan download) antara client dan server.", correct: true },
+                    { text: "C. Menerjemahkan IP address menjadi nama domain.", correct: false },
+                    { text: "D. Menghubungkan printer nirkabel ke laptop.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nFTP (File Transfer Protocol) didesain khusus untuk manajemen pengiriman (upload) dan pengambilan (download) berkas antar sistem.",
+                    wrong: "Belum Tepat! (0 Poin)\nEmail menggunakan SMTP/POP3, Domain menggunakan DNS. Transfer berkas (upload/download) adalah tugas utama FTP."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: FTP (SOAL 2/5)",
+                title: "Misi 4: File Transfer Protocol (FTP)",
+                story: "Kamu mengatur aturan port pada Firewall server agar koneksi kontrol dan pengiriman data FTP tidak terblokir.",
+                goal: "Memahami dual-port yang digunakan oleh FTP.",
+                question: "17. FTP menggunakan dua port terpisah untuk koneksi Command/Control dan Data Transfer. Pasangan port berapakah itu?",
+                options: [
+                    { text: "A. Port 20 (Data) dan Port 21 (Control)", correct: true },
+                    { text: "B. Port 80 (Data) dan Port 443 (Control)", correct: false },
+                    { text: "C. Port 25 (Data) dan Port 110 (Control)", correct: false },
+                    { text: "D. Port 67 (Data) dan Port 68 (Control)", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nFTP menggunakan Port 21 TCP untuk instruksi kontrol/perintah login, serta Port 20 TCP untuk menyalurkan lalu lintas data berkas.",
+                    wrong: "Kurang Tepat! (0 Poin)\nPasangan port standar FTP adalah Port 21 (Control/Command) dan Port 20 (Data Channel)."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: FTP (SOAL 3/5)",
+                title: "Misi 4: File Transfer Protocol (FTP)",
+                story: "Seorang client FTP berada di balik router NAT/Firewall ketat dan mengalami kegagalan saat mentransfer berkas menggunakan Active Mode.",
+                goal: "Memahami perbedaan Active Mode dan Passive Mode pada FTP.",
+                question: "18. Mode koneksi FTP manakah yang paling disarankan jika client berada di balik NAT/Firewall agar server yang membuka port data secara pasif?",
+                options: [
+                    { text: "A. Active Mode", correct: false },
+                    { text: "B. Passive Mode (PASV)", correct: true },
+                    { text: "C. Hybrid Mode", correct: false },
+                    { text: "D. Direct Link Mode", correct: false }
+                ],
+                explanation: {
+                    correct: "Analisis Jitu! (+4 Poin)\nPada Passive Mode (PASV), client meminta server membuka port acak untuk data channel. Ini aman untuk client di balik NAT/Firewall.",
+                    wrong: "Salah! (0 Poin)\nActive Mode sering diblokir oleh firewall client. Passive Mode (PASV) adalah solusi standar saat client dibatasi NAT/Firewall."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: FTP (SOAL 4/5)",
+                title: "Misi 4: File Transfer Protocol (FTP)",
+                story: "Kamu ingin menginstal FTP Server di Debian Linux yang sangat terkenal aman, efisien, dan memiliki konfigurasi `vsftpd.conf` yang mudah.",
+                goal: "Mengenal aplikasi FTP Server populer di Linux.",
+                question: "19. Software FTP Server yang sangat populer di Linux dengan fokus utama pada keamanan dan kecepatan (Very Secure FTP Daemon) adalah...",
+                options: [
+                    { text: "A. vsftpd", correct: true },
+                    { text: "B. bind9", correct: false },
+                    { text: "C. isc-dhcp-server", correct: false },
+                    { text: "D. squid", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+4 Poin)\n`vsftpd` (Very Secure FTP Daemon) adalah aplikasi FTP server standar bawaan Linux (Ubuntu/Debian/CentOS) yang terkenal aman dan cepat.",
+                    wrong: "Salah! (0 Poin)\nBIND9 (DNS), ISC-DHCP (DHCP), Squid (Proxy). Aplikasi FTP Server yang dimaksud adalah `vsftpd` atau `proftpd`."
+                }
+            },
+            {
+                id: 4,
+                badge: "MISI 4 / 5: FTP (SOAL 5/5)",
+                title: "Misi 4: File Transfer Protocol (FTP)",
+                story: "Tim keamanan memperingatkan bahwa FTP biasa mengirim teks password tanpa enkripsi. Kamu disarankan berpindah ke varian aman berbasis SSH.",
+                goal: "Memahami alternatif aman FTP yaitu SFTP (SSH File Transfer Protocol).",
+                question: "20. Protokol transfer file terenkripsi aman yang berjalan di atas saluran SSH (Port 22) sebagai pengganti FTP biasa adalah...",
+                options: [
+                    { text: "A. SFTP (SSH File Transfer Protocol)", correct: true },
+                    { text: "B. TFTP", correct: false },
+                    { text: "C. HTTP", correct: false },
+                    { text: "D. Telnet File", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! (+4 Poin)\nSFTP memanfaatkan terowongan terenkripsi SSH (Port 22) sehingga proses transfer file dan kredensial login terlindungi sepenuhnya dari sniffing.",
+                    wrong: "Kurang Tepat! (0 Poin)\nTFTP bahkan tidak memiliki otentikasi. Solusi transfer file aman terenkripsi di atas SSH adalah SFTP."
+                }
+            },
+
+            // ==================== MISI 5: WEB SERVER (5 SOAL) ====================
+            {
+                id: 5,
+                badge: "MISI 5 / 5: WEB SERVER (SOAL 1/5)",
+                title: "Misi 5: Web Server Deployment",
+                story: "Situs web resmi PT Jaringan Nusantara akan segera diluncurkan. Kamu bertugas mengonfigurasi layanan yang bertugas melayani halaman web ke publik.",
+                goal: "Memahami fungsi utama dari Web Server.",
+                question: "21. Apa peran utama dari perangkat lunak Web Server di internet?",
+                options: [
+                    { text: "A. Memproses permintaan HTTP/HTTPS dari web browser client dan mengirimkan kembali berkas halaman web (HTML, CSS, JS).", correct: true },
+                    { text: "B. Menyimpan berkas video game offline.", correct: false },
+                    { text: "C. Menghubungkan kabel fiber optik ke rumah pelanggan.", correct: false },
+                    { text: "D. Menghapus virus dari laptop pengguna secara otomatis.", correct: false }
+                ],
+                explanation: {
+                    correct: "Tepat Sekali! (+4 Poin)\nWeb Server mendengarkan request dari browser (client) melalui HTTP/HTTPS dan merespons dengan mengirimkan berkas konten web (HTML/CSS/JS).",
+                    wrong: "Belum Benar! (0 Poin)\nWeb Server bertugas menerima HTTP Request dari browser dan merespons dengan memberikan halaman web ke layar pemohon."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: WEB SERVER (SOAL 2/5)",
+                title: "Misi 5: Web Server Deployment",
+                story: "Kamu membuka akses port di router agar website perusahaan dapat diakses secara standar tak terenkripsi (HTTP) dan aman terenkripsi (HTTPS).",
+                goal: "Memahami pasangan port standar HTTP dan HTTPS.",
+                question: "22. Berapakah nomor port standar yang digunakan untuk lalu lintas HTTP dan HTTPS secara berurutan?",
+                options: [
+                    { text: "A. Port 80 untuk HTTP, dan Port 443 untuk HTTPS", correct: true },
+                    { text: "B. Port 21 untuk HTTP, dan Port 22 untuk HTTPS", correct: false },
+                    { text: "C. Port 53 untuk HTTP, dan Port 110 untuk HTTPS", correct: false },
+                    { text: "D. Port 8080 untuk HTTP, dan Port 80 untuk HTTPS", correct: false }
+                ],
+                explanation: {
+                    correct: "Sempurna! (+4 Poin)\nHTTP standar menggunakan TCP Port 80, sedangkan HTTPS (HTTP Secure dengan SSL/TLS) menggunakan TCP Port 443.",
+                    wrong: "Salah! (0 Poin)\nPort standar industri adalah HTTP = Port 80 dan HTTPS = Port 443."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: WEB SERVER (SOAL 3/5)",
+                title: "Misi 5: Web Server Deployment",
+                story: "Kamu harus meletakkan file file `index.html` website di direktori bawaan (Document Root) standar server Linux Debian Apache2.",
+                goal: "Memahami direktori Document Root default pada Linux Debian.",
+                question: "23. Di manakah lokasi folder default (Document Root) untuk menyimpan berkas file website `index.html` pada web server Apache2 di Debian/Ubuntu?",
+                options: [
+                    { text: "A. /var/www/html", correct: true },
+                    { text: "B. /home/user/desktop", correct: false },
+                    { text: "C. /etc/apt/sources.list", correct: false },
+                    { text: "D. /root/downloads", correct: false }
+                ],
+                explanation: {
+                    correct: "Mantap! (+4 Poin)\n`/var/www/html` adalah direktori standar (DocumentRoot) tempat web server Apache2/Nginx mencari berkas web publik di Debian.",
+                    wrong: "Kurang Tepat! (0 Poin)\nSecara default, direktori utama penyimpanan berkas HTML di Debian/Ubuntu Apache2 berada di `/var/www/html`."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: WEB SERVER (SOAL 4/5)",
+                title: "Misi 5: Web Server Deployment",
+                story: "Perusahaan menginginkan web server yang sanggup menangani puluhan ribu koneksi bersamaan (high concurrency) dengan konsumsi RAM yang minim.",
+                goal: "Mengenal dua Web Server paling populer di Linux (Apache vs Nginx).",
+                question: "24. Dua aplikasi Web Server berbasis open source yang paling mendominasi dan banyak digunakan di seluruh dunia adalah...",
+                options: [
+                    { text: "A. Apache2 dan Nginx", correct: true },
+                    { text: "B. MySQL dan PostgreSQL", correct: false },
+                    { text: "C. VirtualBox dan VMware", correct: false },
+                    { text: "D. Winamp dan VLC", correct: false }
+                ],
+                explanation: {
+                    correct: "Keren! (+4 Poin)\nApache2 dan Nginx adalah dua raksasa Web Server yang melayani mayoritas situs web di dunia saat ini.",
+                    wrong: "Salah! (0 Poin)\nMySQL/PostgreSQL adalah Database, VirtualBox adalah Virtualisasi. Web Server terpopuler adalah Apache2 dan Nginx."
+                }
+            },
+            {
+                id: 5,
+                badge: "MISI 5 / 5: WEB SERVER (SOAL 5/5)",
+                title: "Misi 5: Web Server Deployment",
+                story: "Untuk mencegah data login pengguna di website disadap, kamu memasang sertifikat SSL/TLS pada Web Server.",
+                goal: "Memahami peran SSL/TLS pada protokol HTTPS.",
+                question: "25. Apa peran penting dari penggunaan Sertifikat SSL/TLS pada Web Server (HTTPS)?",
+                options: [
+                    { text: "A. Mengenkripsi komunikasi data antara browser client dan web server sehingga aman dari peretasan.", correct: true },
+                    { text: "B. Memperbesar ukuran gambar secara otomatis.", correct: false },
+                    { text: "C. Mengganti domain `.com` menjadi `.id` secara paksa.", correct: false },
+                    { text: "D. Menghapus iklan dari halaman website secara otomatis.", correct: false }
+                ],
+                explanation: {
+                    correct: "Luar Biasa! Misi Selesai! (+4 Poin)\nSSL/TLS menyediakan enkripsi end-to-end pada protokol HTTPS, memastikan kerahasiaan data (seperti password & kartu kredit) saat dikirim melalui internet.",
+                    wrong: "Salah! (0 Poin)\nSertifikat SSL/TLS bertugas menyediakan enkripsi keamanan pada HTTPS agar data tidak dapat diintip oleh pihak lain."
+                }
+            }
+        ];
+
+        // --- GAME STATE VARIABLES ---
+        let currentMissionIndex = 0;
+        let score = 0;
+        let playerName = "Cadet";
+        let soundEnabled = true;
+        let totalSeconds = 30 * 60; // 30 minutes countdown
+        let timerInterval = null;
+        let timeElapsedSeconds = 0;
+
+        // Track score per mission (Misi 1-5)
+        let missionScores = [0, 0, 0, 0, 0];
+
+        // --- AUDIO SYNTHESIZER (Web Audio API - No external files needed) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                }
+            } catch(e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            const text = document.getElementById('soundText');
+            if (soundEnabled) {
+                icon.className = "fa-solid fa-volume-high";
+                text.innerText = "SFX: ON";
+                playSound('click');
+            } else {
+                icon.className = "fa-solid fa-volume-xmark";
+                text.innerText = "SFX: OFF";
+            }
+        }
+
+        // --- TIMER FUNCTIONALITY ---
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    finishGame();
+                    return;
+                }
+                totalSeconds--;
+                timeElapsedSeconds++;
+                
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                document.getElementById('timerDisplay').innerText = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // --- GAME CONTROLLER ---
+        function startGame(e) {
+            e.preventDefault();
+            const input = document.getElementById('playerName').value.trim();
+            if (input) playerName = input;
+
+            playSound('click');
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            document.getElementById('sysUser').innerText = `Admin: ${playerName}`;
+
+            currentMissionIndex = 0;
+            score = 0;
+            missionScores = [0, 0, 0, 0, 0];
+            updateScoreDisplay();
+            startTimer();
+            loadMission(currentMissionIndex);
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('topScore').innerText = score;
+        }
+
+        function loadMission(index) {
+            const data = gameMissions[index];
+
+            // Reset UI states
+            document.getElementById('feedbackBox').classList.add('hidden');
+            document.getElementById('missionBadge').innerText = data.badge;
+            document.getElementById('missionTitle').innerText = data.title;
+            document.getElementById('missionStory').innerText = data.story;
+            document.getElementById('learningGoal').innerText = data.goal;
+            document.getElementById('questionText').innerText = data.question;
+
+            // Render option buttons
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            data.options.forEach((opt, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-cyber-cyan text-slate-200 text-xs sm:text-sm font-mono transition-all duration-200 flex items-center justify-between group cursor-pointer";
+                btn.onclick = () => selectAnswer(optIdx);
+                btn.innerHTML = `
+                    <span>${opt.text}</span>
+                    <i class="fa-solid fa-chevron-right text-slate-600 group-hover:text-cyber-cyan transition-all"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIndex) {
+            const currentData = gameMissions[currentMissionIndex];
+            const isCorrect = currentData.options[selectedIndex].correct;
+            const optionsBtns = document.getElementById('optionsContainer').children;
+
+            // Disable all option buttons
+            for (let btn of optionsBtns) {
+                btn.disabled = true;
+                btn.classList.add('opacity-60', 'cursor-not-allowed');
+            }
+
+            const selectedBtn = optionsBtns[selectedIndex];
+            const feedbackBox = document.getElementById('feedbackBox');
+            const feedbackHeader = document.getElementById('feedbackHeader');
+            const feedbackText = document.getElementById('feedbackText');
+
+            const mId = currentData.id - 1; // 0 to 4
+
+            if (isCorrect) {
+                score += 4; // Each question is worth 4 points (25 x 4 = 100)
+                missionScores[mId] += 4;
+                updateScoreDisplay();
+                playSound('correct');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green', 'font-bold');
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-green/10 border-cyber-green/50 text-cyber-green mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> JAWABAN BENAR! (+4 POIN)`;
+                feedbackText.innerText = currentData.explanation.correct;
+            } else {
+                playSound('wrong');
+
+                selectedBtn.classList.remove('bg-slate-900', 'border-slate-700', 'opacity-60');
+                selectedBtn.classList.add('bg-cyber-red/20', 'border-cyber-red', 'text-cyber-red');
+
+                // Highlight correct answer
+                currentData.options.forEach((opt, idx) => {
+                    if (opt.correct) {
+                        optionsBtns[idx].classList.remove('opacity-60');
+                        optionsBtns[idx].classList.add('bg-cyber-green/20', 'border-cyber-green', 'text-cyber-green');
+                    }
+                });
+
+                feedbackBox.className = "rounded-xl p-4 border bg-cyber-red/10 border-cyber-red/50 text-cyber-red mt-4 space-y-2";
+                feedbackHeader.innerHTML = `<i class="fa-solid fa-circle-xmark text-xl"></i> JAWABAN KURANG TEPAT!`;
+                feedbackText.innerText = currentData.explanation.wrong;
+            }
+
+            feedbackBox.classList.remove('hidden');
+        }
+
+        function nextMission() {
+            playSound('click');
+            currentMissionIndex++;
+            if (currentMissionIndex < gameMissions.length) {
+                loadMission(currentMissionIndex);
+            } else {
+                finishGame();
+            }
+        }
+
+        // --- FINAL EVALUATION & DIPLOMA SCREEN ---
+        function finishGame() {
+            clearInterval(timerInterval);
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            // Set student details
+            document.getElementById('resPlayerName').innerText = playerName;
+
+            // Calculate formatted time taken
+            const minutesTaken = Math.floor(timeElapsedSeconds / 60);
+            const secondsTaken = timeElapsedSeconds % 60;
+            document.getElementById('resTimeTaken').innerText = 
+                `${minutesTaken} m ${secondsTaken} s`;
+
+            document.getElementById('resFinalScore').innerText = `${score} / 100`;
+
+            const resTitle = document.getElementById('resTitle');
+            const resReward = document.getElementById('resReward');
+
+            if (score >= 80) {
+                resTitle.innerText = "🏆 MASTER SYSADMIN";
+                resTitle.className = "font-title text-lg font-bold text-cyber-green glow-text-green";
+                resReward.innerHTML = `
+                    <strong class="font-bold">Selamat!</strong> Kamu lulus dengan predikat <span class="text-white font-bold">Sangat Memuaskan</span>. Kamu menguasai penuh 25 indikator Sistem Operasi Jaringan, SSH, NTP, FTP, dan Web Server.
+                    <br><span class="text-cyber-yellow mt-1 block">🎁 Hadiah: Bebas 1x Tugas Harian + Piagam Penghargaan Utama Kelas XI PPLG.</span>
+                `;
+            } else if (score >= 60) {
+                resTitle.innerText = "⚡ JUNIOR NETWORK TECH";
+                resTitle.className = "font-title text-lg font-bold text-cyber-cyan glow-text-cyan";
+                resReward.innerHTML = `
+                    <strong class="font-bold">Bagus!</strong> Kamu memiliki pemahaman dasar yang kokoh mengenai administrasi server jaringan. Tingkatkan lagi pemahaman pada port & protokol khusus.
+                    <br><span class="text-cyber-yellow mt-1 block">🎁 Hadiah: Nilai Tambahan Plus (+) pada Jurnal Praktikum.</span>
+                `;
+            } else {
+                resTitle.innerText = "🛠️ SYSADMIN PEMULA";
+                resTitle.className = "font-title text-lg font-bold text-cyber-yellow";
+                resReward.innerHTML = `
+                    <strong class="font-bold">Jangan Berkecil Hati!</strong> Kamu telah berusaha menyelesaikan 25 soal tantangan. Pelajari kembali materi port & layanan server lalu pelajari modul remediasi.
+                    <br><span class="text-slate-300 mt-1 block">💡 Saran: Klik 'Coba Ulang Misi' untuk memperbaiki skor kamu!</span>
+                `;
+            }
+        }
+
+        function restartGame() {
+            playSound('click');
+            totalSeconds = 30 * 60;
+            timeElapsedSeconds = 0;
+            currentMissionIndex = 0;
+            score = 0;
+            missionScores = [0, 0, 0, 0, 0];
+            updateScoreDisplay();
+
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+    </script>
+<!-- ... existing code ... -->
+   
+</body>
+</html>
